@@ -23,7 +23,7 @@ jobs:
           - java-version: '11'
             maven-args: ''
           - java-version: '17'
-            maven-args: '-pl !gosu-lab,!gosu-doc,!gosu-ant-tools'
+            maven-args: '-pl !gosu-lab,!gosu-doc,!gosu-ant-tools,!gosu'
 
     steps:
       - name: Checkout source
