@@ -755,7 +755,8 @@ body {{
 .main {{
   margin-left: var(--sidebar-width);
   padding: 32px 40px;
-  max-width: 1100px;
+  max-width: calc(100vw - var(--sidebar-width));
+  overflow-x: hidden;
 }}
 
 /* ===== Dashboard ===== */
@@ -845,20 +846,32 @@ body {{
 
 .section-body {{
   padding: 24px;
+  overflow-x: auto;
+  max-width: 100%;
 }}
 
 /* ===== Tables ===== */
+.table-wrapper {{
+  overflow-x: auto;
+  max-width: 100%;
+  margin: 16px 0;
+}}
+
 table {{
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
   margin: 16px 0;
+  table-layout: auto;
 }}
 
 th, td {{
   padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid var(--border);
+  max-width: 500px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }}
 
 th {{
@@ -911,6 +924,16 @@ pre {{
   font-size: 12px;
   line-height: 1.5;
   margin: 12px 0;
+  max-width: 100%;
+}}
+
+td pre {{
+  max-width: 400px;
+  margin: 0;
+  padding: 4px 8px;
+  font-size: 11px;
+  white-space: pre-wrap;
+  word-break: break-all;
 }}
 
 code {{
@@ -925,6 +948,8 @@ code {{
   font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
   font-size: 12px;
   border: 1px solid var(--border);
+  word-break: break-all;
+  overflow-wrap: break-word;
 }}
 
 /* ===== Mermaid Diagram ===== */
