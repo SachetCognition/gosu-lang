@@ -16,33 +16,34 @@ jobs:
     permissions:
       contents: read
 
+    strategy:
+      matrix:
+        java-version: ['11', '17']
+        include:
+          - java-version: '11'
+            maven-args: ''
+          - java-version: '17'
+            maven-args: '-pl !gosu-lab,!gosu-doc,!gosu-ant-tools,!gosu'
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Set up Java (Amazon Corretto 11)
+      - name: Set up Java (Amazon Corretto ${{ matrix.java-version }})
         uses: actions/setup-java@v4
         with:
           distribution: 'corretto'
-          java-version: '11'
+          java-version: ${{ matrix.java-version }}
           cache: 'maven'
 
       - name: Build and run tests
-        run: mvn clean verify -B -V
+        run: mvn clean verify -B -V ${{ matrix.maven-args }}
 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2-
-      
       - name: Test results Summary
         if: always()
         run: |
           echo "## 🧪 Test Results Summary" >> $GITHUB_STEP_SUMMARY
-          echo "**Java Version:** 11" >> $GITHUB_STEP_SUMMARY
+          echo "**Java Version:** ${{ matrix.java-version }}" >> $GITHUB_STEP_SUMMARY
           # Count test files and results
           TOTAL_FILES=$(find . -name "TEST-*.xml" | wc -l)
           echo "**Test report files:** $TOTAL_FILES" >> $GITHUB_STEP_SUMMARY
@@ -73,7 +74,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-reports
+          name: test-reports-java-${{ matrix.java-version }}
           path: |
             **/target/surefire-reports/
             **/target/failsafe-reports/

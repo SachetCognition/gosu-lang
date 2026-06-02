@@ -155,7 +155,7 @@ public class HtmlDoclet extends AbstractDoclet
 
     protected void copyJqueryFiles() {
         List<String> files = Arrays.asList(
-                "jquery-1.10.2.js",
+                "jquery-3.7.1.js",
                 "jquery-ui.js",
                 "jquery-ui.css",
                 "jquery-ui.min.js",

@@ -44,8 +44,8 @@ jobs:
           script: |
             try {
               const permission = await github.rest.repos.getCollaboratorPermissionLevel({
-                owner: 'gosu-lang',
-                repo: 'gosu-lang',
+                owner: context.repo.owner,
+                repo: context.repo.repo,
                 username: context.actor
               });
               console.log(`User ${context.actor} repository permission: ${permission.data.permission}`);
