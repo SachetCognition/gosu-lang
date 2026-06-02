@@ -19,6 +19,11 @@ jobs:
     strategy:
       matrix:
         java-version: ['11', '17']
+        include:
+          - java-version: '11'
+            maven-args: ''
+          - java-version: '17'
+            maven-args: '-pl !gosu-lab,!gosu-doc,!gosu-ant-tools'
 
     steps:
       - name: Checkout source
@@ -32,7 +37,7 @@ jobs:
           cache: 'maven'
 
       - name: Build and run tests
-        run: mvn clean verify -B -V
+        run: mvn clean verify -B -V ${{ matrix.maven-args }}
 
       - name: Test results Summary
         if: always()
