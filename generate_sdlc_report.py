@@ -212,7 +212,7 @@ def scan_phase3():
                         if ch == '{':
                             brace_count += 1
                             in_catch = True
-                        elif ch == '}':
+                        elif ch == '}' and in_catch:
                             brace_count -= 1
                     if in_catch and k > i:
                         catch_body.append(lines[k].strip())

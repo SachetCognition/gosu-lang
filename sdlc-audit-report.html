@@ -406,7 +406,7 @@ code {
 <!-- Sidebar -->
 <aside class="sidebar">
   <h2>SDLC Audit</h2>
-  <div class="subtitle">gosu-lang &middot; 2026-06-02 21:13:49 UTC</div>
+  <div class="subtitle">gosu-lang &middot; 2026-06-02 21:19:17 UTC</div>
   <nav>
     <a href="#dashboard"><span class="phase-num">&bull;</span> Dashboard</a>
     <a href="#phase1"><span class="phase-num">1</span> Architecture</a>
@@ -429,13 +429,13 @@ code {
 <div class="main">
 
   <h1 style="font-size:28px; margin-bottom:4px;">SDLC Audit Report</h1>
-  <p style="color:var(--text-muted); margin-bottom:32px;">gosu-lang v1.18.8-SNAPSHOT &middot; Generated 2026-06-02 21:13:49 UTC</p>
+  <p style="color:var(--text-muted); margin-bottom:32px;">gosu-lang v1.18.8-SNAPSHOT &middot; Generated 2026-06-02 21:19:17 UTC</p>
 
   <!-- Dashboard -->
   <div id="dashboard" class="dashboard">
     <div class="dash-card">
       <div class="label">Total Findings</div>
-      <div class="value">599</div>
+      <div class="value">351</div>
     </div>
     <div class="dash-card critical">
       <div class="label">High / Critical</div>
@@ -447,7 +447,7 @@ code {
     </div>
     <div class="dash-card low">
       <div class="label">Low</div>
-      <div class="value">586</div>
+      <div class="value">338</div>
     </div>
     <div class="dash-card pass">
       <div class="label">Modules Analyzed</div>
@@ -467,17 +467,17 @@ code {
       <p>The root <code class="inline-code">pom.xml</code> (lines 20-31) defines <strong>12</strong> modules:</p>
       <table>
         <tr><th>Module</th><th>Internal Dependencies</th></tr>
-        <tr><td><code class="inline-code">gosu</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-lab</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-doc</code>, <code class="inline-code">gosu-core</code></td></tr>
-        <tr><td><code class="inline-code">gosu-ant-tools</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-doc</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-parent</code></td></tr>
+        <tr><td><code class="inline-code">gosu</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-lab</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-doc</code></td></tr>
+        <tr><td><code class="inline-code">gosu-ant-tools</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-doc</code></td></tr>
         <tr><td><code class="inline-code">gosu-core</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code></td></tr>
-        <tr><td><code class="inline-code">gosu-core-api</code></td><td><code class="inline-code">gosu-parent</code>, <code class="inline-code">gw-asm-all</code>, <code class="inline-code">gw-jcommander</code></td></tr>
-        <tr><td><code class="inline-code">gosu-core-api-precompiled</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-maven-compiler</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-parent</code></td></tr>
-        <tr><td><code class="inline-code">gosu-process</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-parent</code></td></tr>
-        <tr><td><code class="inline-code">gosu-lab</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-parent</code></td></tr>
-        <tr><td><code class="inline-code">gosu-doc</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-maven-compiler</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-parent</code></td></tr>
-        <tr><td><code class="inline-code">gosu-maven-compiler</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-parent</code></td></tr>
+        <tr><td><code class="inline-code">gosu-core-api</code></td><td><code class="inline-code">gw-jcommander</code>, <code class="inline-code">gw-asm-all</code>, <code class="inline-code">gosu-parent</code></td></tr>
+        <tr><td><code class="inline-code">gosu-core-api-precompiled</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-maven-compiler</code></td></tr>
+        <tr><td><code class="inline-code">gosu-process</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code></td></tr>
+        <tr><td><code class="inline-code">gosu-lab</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code></td></tr>
+        <tr><td><code class="inline-code">gosu-doc</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-maven-compiler</code></td></tr>
+        <tr><td><code class="inline-code">gosu-maven-compiler</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code></td></tr>
         <tr><td><code class="inline-code">gosu-parent</code></td><td><span style="color:var(--text-muted)">none</span></td></tr>
-        <tr><td><code class="inline-code">gosu-test</code></td><td><code class="inline-code">gosu-test-api</code>, <code class="inline-code">gosu-maven-compiler</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-parent</code></td></tr>
+        <tr><td><code class="inline-code">gosu-test</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-test-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-maven-compiler</code></td></tr>
         <tr><td><code class="inline-code">gosu-test-api</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code></td></tr>
       </table>
 
@@ -692,177 +692,13 @@ gosu-parent
     </div>
     <div class="section-body">
       <h4 class="subheading">3a. Silently Swallowed Exceptions</h4>
-      <p>Found <strong>560</strong> empty or comment-only catch blocks:</p>
+      <p>Found <strong>312</strong> empty or comment-only catch blocks:</p>
       <table>
         <tr><th>File</th><th>Line</th><th>Code Snippet</th></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/SplitIndexWriter.java</code></td><td>98</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.standardmessage.error(
-                        &quot;doclet.exception_encountered&quot;,
-                        exc.toString(), filename.getPath())</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/FrameOutputWriter.java</code></td><td>72</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.standardmessage.error(
-                        &quot;doclet.exception_encountered&quot;,
-                        exc.toString(), filename);
-        </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/ClassUseWriter.java</code></td><td>201</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.standardmessage.
-                error(&quot;doclet.exception_encountered&quot;,
-                      exc.toString(), path.getPath());
-            </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/AllClassesFrameWriter.java</code></td><td>90</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.standardmessage.
-                     error(&quot;doclet.exception_encountered&quot;,
-                           exc.toString(), filename);
-        </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/PackageIndexFrameWriter.java</code></td><td>56</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.standardmessage.error(
-                        &quot;doclet.exception_encountered&quot;,
-                        exc.toString(), filename);
-        </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/PackageFrameWriter.java</code></td><td>100</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.standardmessage.error(
-                    &quot;doclet.exception_encountered&quot;,
-                    exc.toString(), DocPaths.PACKAGE_FRAME.getP</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/ClassWriterImpl.java</code></td><td>619</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Exception e) {
-            e.printStackTrace();
-            throw new DocletAbortException(e);
-        }
-    }
-</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/PackageUseWriter.java</code></td><td>89</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.standardmessage.error(
-                &quot;doclet.exception_encountered&quot;,
-                exc.toString(), filename);
-            throw new Do</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/TreeWriter.java</code></td><td>78</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.standardmessage.error(
-                        &quot;doclet.exception_encountered&quot;,
-                        exc.toString(), filename);
-        </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/PackageIndexWriter.java</code></td><td>90</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.standardmessage.error(
-                        &quot;doclet.exception_encountered&quot;,
-                        exc.toString(), filename);
-        </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/AbstractIndexWriter.java</code></td><td>392</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>            } catch (IOException ie) {
-                throw new DocletAbortException(ie);
-            }
-        }
-    }
-</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/AbstractIndexWriter.java</code></td><td>414</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException e) {
-            throw new DocletAbortException(e);
-        }
-    }
-}</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/AnnotationTypeWriterImpl.java</code></td><td>303</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Exception e) {
-            e.printStackTrace();
-            throw new DocletAbortException(e);
-        }
-    }
-</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/PackageTreeWriter.java</code></td><td>93</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.standardmessage.error(
-                        &quot;doclet.exception_encountered&quot;,
-                        exc.toString(), path.getPath());
-  </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/HtmlDoclet.java</code></td><td>222</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>            } catch (IOException e) {
-                throw new DocletAbortException(e);
-            } catch ( FatalError fe) {
-                throw fe;
-            } catch (DocletAbortException de) </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/HtmlDoclet.java</code></td><td>224</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>            } catch ( FatalError fe) {
-                throw fe;
-            } catch (DocletAbortException de) {
-                de.printStackTrace();
-                throw de;
-            } catch (Ex</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/HtmlDoclet.java</code></td><td>226</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>            } catch (DocletAbortException de) {
-                de.printStackTrace();
-                throw de;
-            } catch (Exception e) {
-                e.printStackTrace();
-               </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/HtmlDoclet.java</code></td><td>229</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>            } catch (Exception e) {
-                e.printStackTrace();
-                throw new DocletAbortException(e);
-            }
-        }
-    }</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/HtmlDoclet.java</code></td><td>327</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.message.error((gw.gosudoc.com.sun.javadoc.SourcePosition) null,
-                    &quot;doclet.perform_copy_exception_encountered&quot;,
-         </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/ConfigurationImpl.java</code></td><td>232</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>            } catch (MissingResourceException e) {
-                return BUILD_DATE;
-            }
-        }
-
-        try {</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/ConfigurationImpl.java</code></td><td>239</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (MissingResourceException e) {
-            return BUILD_DATE;
-        }
-    }
-
-    /**</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/ConfigurationImpl.java</code></td><td>469</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>                } catch (MalformedURLException e) {
-                    reporter.printError(getText(&quot;doclet.MalformedURL&quot;, os[1]));
-                    return false;
-                }
-            } el</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/HelpWriter.java</code></td><td>58</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.standardmessage.error(
-                        &quot;doclet.exception_encountered&quot;,
-                        exc.toString(), filename);
-        </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/SingleIndexWriter.java</code></td><td>70</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.standardmessage.error(
-                        &quot;doclet.exception_encountered&quot;,
-                        exc.toString(), filename);
-        </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/DeprecatedListWriter.java</code></td><td>115</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.standardmessage.error(
-                        &quot;doclet.exception_encountered&quot;,
-                        exc.toString(), filename);
-        </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/formats/html/SourceToHTMLConverter.java</code></td><td>165</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/AbstractDoclet.java</code></td><td>73</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Configuration.Fault f) {
-            root.printError(f.getMessage());
-            return false;
-        } catch ( FatalError fe) {
-            return false;
-        } catch ( DocletAb</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/AbstractDoclet.java</code></td><td>76</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch ( FatalError fe) {
-            return false;
-        } catch ( DocletAbortException e) {
-            e.printStackTrace();
-            Throwable cause = e.getCause();
-            if (ca</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/AbstractDoclet.java</code></td><td>78</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch ( DocletAbortException e) {
-            e.printStackTrace();
-            Throwable cause = e.getCause();
-            if (cause != null) {
-                if (cause.getLocalizedMessage(</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/AbstractDoclet.java</code></td><td>89</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Exception exc) {
-            return false;
-        }
-        return true;
-    }
-</code></pre></td></tr>
         <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/Configuration.java</code></td><td>405</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>                } catch (NumberFormatException e) {
                     //Set to -1 so that warning will be printed
                     //to indicate what is valid argument.
                     source</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/Configuration.java</code></td><td>636</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (UnsupportedEncodingException exc) {
-            reporter.printError(getText(&quot;doclet.Encoding_not_supported&quot;,
-                docencoding));
-            return false;
-        } finally</code></pre></td></tr>
         <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/Configuration.java</code></td><td>645</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>            } catch (IOException exc) {
             }
         }
@@ -875,96 +711,280 @@ gosu-parent
         }
         return out.toString();
     }</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/builders/LayoutParser.java</code></td><td>77</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new DocletAbortException(t);
-        }
-    }
-</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/builders/SerializedFormBuilder.java</code></td><td>111</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Exception e) {
-            throw new DocletAbortException(e);
-        }
-        build(layoutParser.parseXML(NAME), contentTree);
-        writer.close();
-    }</code></pre></td></tr>
         <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/builders/SerializedFormBuilder.java</code></td><td>524</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (NullPointerException e) {
             //Workaround for null pointer bug in ClassDoc.superclassType().
             return false;
         }
         if (cd.isSerializable()) {
           </code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/builders/AbstractBuilder.java</code></td><td>127</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            configuration.root.printError(&quot;Unknown element: &quot; + component);
-            throw new DocletAbortException(e);
-</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/builders/AbstractBuilder.java</code></td><td>131</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof FatalError ) {
-                throw (FatalError) cause;
-            } else</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/builders/AbstractBuilder.java</code></td><td>140</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Exception e) {
-            e.printStackTrace();
-            configuration.root.printError(&quot;Exception &quot; +
-                    e.getClass().getName() +
-                    &quot; thrown whil</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/util/StandardDocFileFactory.java</code></td><td>64</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>                } catch (IOException e) {
-                    throw new DocletAbortException(e);
-                }
-            }
-
-            destDir = fileManager.getLocationAsPaths(DocumentationTool</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/util/StandardDocFileFactory.java</code></td><td>208</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>            } catch (IOException e) {
-                return false;
-            }
-        }
-
-        /** If the file is a directory, list its contents. */</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/util/StandardDocFileFactory.java</code></td><td>229</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>            } catch (IOException e) {
-                return false;
-            }
-        }
-
-        /**</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/util/Extern.java</code></td><td>166</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Fault f) {
-            reporter.printWarning(f.getMessage());
-            return false;
-        }
-    }
-</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/util/Extern.java</code></td><td>175</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (MalformedURLException e) {
-            throw new Fault(configuration.getText(&quot;doclet.MalformedURL&quot;, url), e);
-        }
-    }
-
-    private class Fault extends Exception {</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/util/Extern.java</code></td><td>218</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (URISyntaxException | MalformedURLException exc) {
-            throw new Fault(configuration.getText(&quot;doclet.MalformedURL&quot;, pkglisturlpath.toString()), exc);
-        }
-        catch (I</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/util/Extern.java</code></td><td>247</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-           throw new Fault(configuration.getText(&quot;doclet.File_error&quot;, file.getPath()), exc);
-        }
-    }
-
-    /**</code></pre></td></tr>
         <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/util/Extern.java</code></td><td>291</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (MalformedURLException e) {
             //Since exception is thrown, this must be a directory path.
             return false;
         }
     }
 }</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/util/Utils.java</code></td><td>228</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (SecurityException | IOException exc) {
-            throw new DocletAbortException(exc);
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/util/DocFile.java</code></td><td>123</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        catch (FileNotFoundException | SecurityException exc) {
         }
     }
+
     /**
-     * Returns a TypeComparator object suitable for sorting Types.</code></pre></td></tr>
-        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/util/PackageListWriter.java</code></td><td>54</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException exc) {
-            configuration.message.error(&quot;doclet.exception_encountered&quot;,
-                exc.toString(), DocPaths.PACKAGE_LIST);
-            throw new DocletAbortExc</code></pre></td></tr>
-        <tr><td colspan="3" style="text-align:center;color:var(--text-muted);">... and 510 more</td></tr>
+     * Copy the contents of a resource file to this file.</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/taglets/TagletManager.java</code></td><td>284</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Exception e) {
+            // do nothing
+            e.printStackTrace();
+        }
+    }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/taglets/TagletWriter.java</code></td><td>212</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>            } catch (IllegalArgumentException e) {
+                //The taglet does not take a member as an argument.  Let's try
+                //a single tag.
+                gw.gosudoc.com.sun.jav</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/JavaScriptScanner.java</code></td><td>243</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (ParseException e) {
+        }
+    }
+
+    private static enum WhitespaceRetentionPolicy {
+        RETAIN_ALL,</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/Start.java</code></td><td>218</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch ( gw.gosudoc.com.sun.tools.javadoc.main.Messager.ExitJavadoc exc) {
+            // ignore, we just exit this way
+        } catch (OutOfMemoryError ee) {
+            messager.error( gw.</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/Start.java</code></td><td>223</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (ClientCodeException e) {
+            // simply rethrow these exceptions, to be caught and handled by JavadocTaskImpl
+            throw e;
+        } catch (Error ee) {
+            ee.p</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/Start.java</code></td><td>240</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>                } catch (IOException ignore) {
+                }
+            }
+            messager.exitNotice();
+            messager.flush();
+        }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/ClassDocImpl.java</code></td><td>678</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (CompletionFailure e) {
+            // quietly ignore completion failures
+        }
+    }
+
+    /**</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/ClassDocImpl.java</code></td><td>1213</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (CompletionFailure ex) {
+            // quietly ignore completion failures
+            return false;
+        }
+    }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/ClassDocImpl.java</code></td><td>1226</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (CompletionFailure ex) {
+            // quietly ignore completion failures
+            return false;
+        }
+    }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/JavadocTool.java</code></td><td>200</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Abort ex) {}
+
+        if (messager.nerrors() != 0)
+            return null;
+
+        return new RootDocImpl(docenv, listClasses(classTrees.toList()), List.from(includedPackages), opti</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/DocletInvoker.java</code></td><td>162</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (ClassNotFoundException e) {
+        }
+
+        // Condition 2.
+        try {
+            if (getClass() == sysCL.loadClass(getClass().getName())) {</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/DocletInvoker.java</code></td><td>175</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (ClassNotFoundException e) {
+        }
+
+        return ctxCL;
+    }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/DocletInvoker.java</code></td><td>370</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Exception e) {
+            // do nothing
+        }
+    }
+
+    /**</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/Launcher.java</code></td><td>417</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        catch( NumberFormatException e )
+        {
+          // don't care
+        }
+      }
+    }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>554</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        catch( NumberFormatException nfe )
+        {
+          // ignore
+        }
+        getEditor().requestFocus();
+        EditorUtilities.fixSwingFocusBugWhenPopupCloses( EditorHost.this );</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>707</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        catch( BadLocationException e )
+        {
+          //ignore
+        }
+      }
+    }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>771</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>      catch( BadLocationException e )
+      {
+        //ignore
+      }
+    }
+    finally</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>840</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( BadLocationException e )
+    {
+      //ignore
+    }
+  }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>882</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( BadLocationException e )
+    {
+      // can't center
+    }
+  }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>898</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>      catch( BadLocationException e )
+      {
+        //throw new RuntimeException( e );
+      }
+    }
+  }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>1272</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( BadLocationException e1 )
+    {
+      // ignore
+    }
+  }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>1440</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( Exception e )
+    {
+      // ignore
+    }
+  }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>1863</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>          catch( InterruptedException e )
+          {
+            // ?
+          }
+        }
+      }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/JavadocPopup.java</code></td><td>149</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( Exception e )
+    {
+      // Do nothing
+    }
+    return false;
+  }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GotoTypePopup.java</code></td><td>248</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>      catch( PatternSyntaxException e )
+      {
+        // Skip
+      }
+    }
+    return filteredTypes;</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/CopyBuffer.java</code></td><td>58</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( Exception e )
+    {
+      // sometimes the clipboard doesn't open
+      return;
+    }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuEditor.java</code></td><td>494</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>          catch( BadLocationException e )
+          {
+            //throw new RuntimeException( e );
+          }
+        }
+      }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuEditor.java</code></td><td>750</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>          catch( RuntimeException e )
+          {
+            // eat potential TypeMayHaveBeenDeletedException
+          }
+        }
+      }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuEditor.java</code></td><td>855</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>//                  catch( Exception e )
+//                  {
+//                    // mmm mm  good
+//                  }
+//                }
+//              }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuEditor.java</code></td><td>933</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>//    catch( MalformedURLException e )
+//    {
+//      //ignore
+//    }
+//    return null;
+//  }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuEditor.java</code></td><td>1315</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( BadLocationException e )
+    {
+      //ignore
+    }
+  }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuEditor.java</code></td><td>1723</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( Exception e )
+    {
+      // never mind
+    }
+    return parseIssues;
+  }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuPanel.java</code></td><td>2129</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        catch( Exception e1 )
+        {
+          //throw new RuntimeException( e1 );
+        }
+      }
+    }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/BeanTree.java</code></td><td>233</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>      catch( Throwable t )
+      {
+        // ignore
+      }
+      if( beanInfo == null )
+      {</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/BeanTree.java</code></td><td>298</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( NumberFormatException nfe )
+    {
+      // Eat this
+    }
+
+    evaluateProperties();</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuDocument.java</code></td><td>162</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( Throwable t )
+    {
+      // Ok, what we are guarding against here is primarly a InnerClassNotFoundException. These can happen here in the UI
+      // Thread when the intellisense thread is</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuDocument.java</code></td><td>185</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( Throwable t )
+    {
+      // Ok, what we are guarding against here is primarly a InnerClassNotFoundException. These can happen here in the UI
+      // Thread when the intellisense thread is</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuDocument.java</code></td><td>283</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>      catch( Exception e )
+      {
+        // Eat it.
+      }
+    }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuDocument.java</code></td><td>334</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>          catch( BadLocationException e )
+          {
+            //ignore
+          }
+        }
+      }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/JavaToGosuTypeConverter.java</code></td><td>21</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>//      } catch (Exception ex) {
+//        // ok
+//      }
+//    }
+//
+//    origName = origName == null ? &quot;&quot; : origName.replaceAll(&quot;com\\.guidewire\\.\\w\\w\\.webservices&quot;, &quot;soap.local&quot;);</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuStyleContext.java</code></td><td>679</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>      catch( Throwable e )
+      {
+        // can't adjust scanner... calling logic
+        // will simply render the remaining text.
+        editor.util.EditorUtilities.handleUncaughtException( e );
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/SmartFixManager.java</code></td><td>365</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>          catch( BadLocationException e )
+          {
+            //ignore
+          }
+          break;
+        }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/SmartFixManager.java</code></td><td>531</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>//    catch( BadLocationException e )
+//    {
+//      // ignore
+//    }
+//  }
+//</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/SmartFixManager.java</code></td><td>546</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>//    catch( BadLocationException e )
+//    {
+//      //ignore
+//    }
+//  }
+</code></pre></td></tr>
+        <tr><td colspan="3" style="text-align:center;color:var(--text-muted);">... and 262 more</td></tr>
       </table>
 
       <h4 class="subheading">3b. JDK Internal API Usage (--add-exports)</h4>
