@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDLC Audit Report — gosu-lang</title>
+<style>
+/* ===== CSS Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f8f9fa;
+  --bg-card: #ffffff;
+  --bg-sidebar: #1e293b;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --text-sidebar: #e2e8f0;
+  --border: #e2e8f0;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --critical: #dc2626;
+  --high: #ea580c;
+  --medium: #d97706;
+  --low: #65a30d;
+  --pass: #16a34a;
+  --code-bg: #f1f5f9;
+  --sidebar-width: 280px;
+  --header-height: 0px;
+}
+
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --bg-card: #1e293b;
+  --bg-sidebar: #0f172a;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-sidebar: #cbd5e1;
+  --border: #334155;
+  --code-bg: #1e293b;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--bg-sidebar);
+  color: var(--text-sidebar);
+  overflow-y: auto;
+  padding: 24px 16px;
+  z-index: 100;
+  border-right: 1px solid var(--border);
+}
+
+.sidebar h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.sidebar .subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.sidebar nav a {
+  display: block;
+  padding: 8px 12px;
+  margin: 2px 0;
+  color: var(--text-sidebar);
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+.sidebar nav a .phase-num {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.sidebar-controls {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  color: var(--text-sidebar);
+  cursor: pointer;
+  font-size: 13px;
+  width: 100%;
+}
+
+.theme-toggle:hover { background: rgba(255,255,255,0.1); }
+
+/* ===== Main Content ===== */
+.main {
+  margin-left: var(--sidebar-width);
+  padding: 32px 40px;
+  max-width: calc(100vw - var(--sidebar-width));
+  overflow-x: hidden;
+}
+
+/* ===== Dashboard ===== */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.dash-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.dash-card .value {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 8px 0 4px;
+}
+
+.dash-card .label {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dash-card.critical .value { color: var(--critical); }
+.dash-card.high .value { color: var(--high); }
+.dash-card.medium .value { color: var(--medium); }
+.dash-card.low .value { color: var(--low); }
+.dash-card.pass .value { color: var(--pass); }
+
+/* ===== Sections ===== */
+.section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  padding: 20px 24px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-header:hover { background: rgba(0,0,0,0.02); }
+[data-theme="dark"] .section-header:hover { background: rgba(255,255,255,0.02); }
+
+.section-header .phase-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.section-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.section-header .chevron {
+  font-size: 18px;
+  transition: transform 0.2s;
+}
+
+.section.collapsed .section-body { display: none; }
+.section.collapsed .chevron { transform: rotate(-90deg); }
+
+.section-body {
+  padding: 24px;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* ===== Tables ===== */
+.table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+  margin: 16px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 16px 0;
+  table-layout: auto;
+}
+
+th, td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  max-width: 500px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+th {
+  background: var(--code-bg);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+tr:hover td { background: rgba(59,130,246,0.04); }
+
+/* ===== Badges ===== */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-critical { background: #fef2f2; color: var(--critical); border: 1px solid #fecaca; }
+.badge-high { background: #fff7ed; color: var(--high); border: 1px solid #fed7aa; }
+.badge-medium { background: #fffbeb; color: var(--medium); border: 1px solid #fde68a; }
+.badge-low { background: #f0fdf4; color: var(--low); border: 1px solid #bbf7d0; }
+.badge-pass { background: #f0fdf4; color: var(--pass); border: 1px solid #bbf7d0; }
+.badge-none { background: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border); }
+.badge-good { background: #f0fdf4; color: var(--pass); border: 1px solid #bbf7d0; }
+.badge-moderate { background: #fffbeb; color: var(--medium); border: 1px solid #fde68a; }
+
+[data-theme="dark"] .badge-critical { background: #450a0a; border-color: #7f1d1d; }
+[data-theme="dark"] .badge-high { background: #431407; border-color: #7c2d12; }
+[data-theme="dark"] .badge-medium { background: #451a03; border-color: #78350f; }
+[data-theme="dark"] .badge-low { background: #052e16; border-color: #14532d; }
+[data-theme="dark"] .badge-pass { background: #052e16; border-color: #14532d; }
+[data-theme="dark"] .badge-none { background: #1e293b; border-color: #334155; }
+[data-theme="dark"] .badge-good { background: #052e16; border-color: #14532d; }
+[data-theme="dark"] .badge-moderate { background: #451a03; border-color: #78350f; }
+
+/* ===== Code Blocks ===== */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 12px 0;
+  max-width: 100%;
+}
+
+td pre {
+  max-width: 400px;
+  margin: 0;
+  padding: 4px 8px;
+  font-size: 11px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+code {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 12px;
+}
+
+.inline-code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+/* ===== Mermaid Diagram ===== */
+.mermaid-container {
+  margin: 16px 0;
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+/* ===== Floating Download Button ===== */
+.download-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+  z-index: 200;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.download-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.download-btn:active { transform: translateY(0); }
+
+/* ===== Recommendation Cards ===== */
+.rec-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 12px 0;
+}
+
+.rec-card h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.rec-card .meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.rec-card p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ===== Print Styles ===== */
+@media print {
+  .sidebar, .download-btn, .theme-toggle { display: none !important; }
+  .main { margin-left: 0; padding: 16px; max-width: 100%; }
+  .section { break-inside: avoid; }
+  .section.collapsed .section-body { display: block !important; }
+  body { background: #fff; color: #000; }
+  .dash-card, .section { border: 1px solid #ccc; }
+  pre { font-size: 10px; }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px; }
+}
+
+.subheading {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+
+.note {
+  background: #eff6ff;
+  border-left: 4px solid var(--accent);
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  margin: 12px 0;
+  font-size: 13px;
+}
+
+[data-theme="dark"] .note {
+  background: #1e3a5f;
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <h2>SDLC Audit</h2>
+  <div class="subtitle">gosu-lang &middot; 2026-06-02 21:34:23 UTC</div>
+  <nav>
+    <a href="#dashboard"><span class="phase-num">&bull;</span> Dashboard</a>
+    <a href="#phase1"><span class="phase-num">1</span> Architecture</a>
+    <a href="#phase2"><span class="phase-num">2</span> Compilation Pipeline</a>
+    <a href="#phase3"><span class="phase-num">3</span> Code Quality</a>
+    <a href="#phase4"><span class="phase-num">4</span> Security Audit</a>
+    <a href="#phase5"><span class="phase-num">5</span> Test Coverage</a>
+    <a href="#phase6"><span class="phase-num">6</span> CI/CD Analysis</a>
+    <a href="#phase7"><span class="phase-num">7</span> Documentation Gaps</a>
+    <a href="#phase8"><span class="phase-num">8</span> Recommendations</a>
+  </nav>
+  <div class="sidebar-controls">
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">&#9790;</span> Toggle Theme
+    </button>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<div class="main">
+
+  <h1 style="font-size:28px; margin-bottom:4px;">SDLC Audit Report</h1>
+  <p style="color:var(--text-muted); margin-bottom:32px;">gosu-lang v1.18.8-SNAPSHOT &middot; Generated 2026-06-02 21:34:23 UTC</p>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="dashboard">
+    <div class="dash-card">
+      <div class="label">Total Findings</div>
+      <div class="value">332</div>
+    </div>
+    <div class="dash-card critical">
+      <div class="label">High / Critical</div>
+      <div class="value">4</div>
+    </div>
+    <div class="dash-card medium">
+      <div class="label">Medium</div>
+      <div class="value">11</div>
+    </div>
+    <div class="dash-card low">
+      <div class="label">Low</div>
+      <div class="value">317</div>
+    </div>
+    <div class="dash-card pass">
+      <div class="label">Modules Analyzed</div>
+      <div class="value">12</div>
+    </div>
+  </div>
+
+
+  <div id="phase1" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="phase-badge">1</span>
+      <h3>Architecture &amp; Module Dependency Map</h3>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="section-body">
+      <h4 class="subheading">Module List</h4>
+      <p>The root <code class="inline-code">pom.xml</code> (lines 20-31) defines <strong>12</strong> modules:</p>
+      <table>
+        <tr><th>Module</th><th>Internal Dependencies</th></tr>
+        <tr><td><code class="inline-code">gosu</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-lab</code>, <code class="inline-code">gosu-doc</code></td></tr>
+        <tr><td><code class="inline-code">gosu-ant-tools</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-doc</code>, <code class="inline-code">gosu-core</code></td></tr>
+        <tr><td><code class="inline-code">gosu-core</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code></td></tr>
+        <tr><td><code class="inline-code">gosu-core-api</code></td><td><code class="inline-code">gw-asm-all</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gw-jcommander</code></td></tr>
+        <tr><td><code class="inline-code">gosu-core-api-precompiled</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-maven-compiler</code>, <code class="inline-code">gosu-core</code></td></tr>
+        <tr><td><code class="inline-code">gosu-process</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core</code></td></tr>
+        <tr><td><code class="inline-code">gosu-lab</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core</code></td></tr>
+        <tr><td><code class="inline-code">gosu-doc</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-maven-compiler</code>, <code class="inline-code">gosu-core</code></td></tr>
+        <tr><td><code class="inline-code">gosu-maven-compiler</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core</code></td></tr>
+        <tr><td><code class="inline-code">gosu-parent</code></td><td><span style="color:var(--text-muted)">none</span></td></tr>
+        <tr><td><code class="inline-code">gosu-test</code></td><td><code class="inline-code">gosu-maven-compiler</code>, <code class="inline-code">gosu-test-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core</code></td></tr>
+        <tr><td><code class="inline-code">gosu-test-api</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code></td></tr>
+      </table>
+
+      <h4 class="subheading">Key External Dependencies</h4>
+      <table>
+        <tr><th>Library</th><th>Version</th><th>Artifact</th><th>Purpose</th></tr>
+        <tr><td>ASM</td><td>9.7</td><td><code class="inline-code">gw-asm-all</code></td><td>Bytecode manipulation</td></tr>
+        <tr><td>Manifold</td><td>2024.1.38</td><td><code class="inline-code">manifold</code></td><td>Metaprogramming / Open Type System</td></tr>
+        <tr><td>JCommander</td><td>1.82</td><td><code class="inline-code">gw-jcommander</code></td><td>Command-line argument parsing</td></tr>
+      </table>
+
+      <div class="note">
+        <strong>API/Impl Separation:</strong> <code class="inline-code">gosu-core-api</code> defines public interfaces (type system, reflection);
+        <code class="inline-code">gosu-core</code> contains all internal implementation (parser, IR generation, bytecode emission).
+      </div>
+
+      <h4 class="subheading">Dependency Diagram</h4>
+      <div class="mermaid-container">
+        <pre class="mermaid">
+graph TD
+    GP[gosu-parent] --> GCA[gosu-core-api]
+    GCA --> GC[gosu-core]
+    GC --> GL[gosu-lab]
+    GC --> GD[gosu-doc]
+    GC --> GMC[gosu-maven-compiler]
+    GCA --> GAT[gosu-ant-tools]
+    GCA --> GTA[gosu-test-api]
+    GTA --> GT[gosu-test]
+    GCA --> GCAP[gosu-core-api-precompiled]
+    GP --> G[gosu]
+    GP --> GPR[gosu-process]
+
+    style GP fill:#3b82f6,stroke:#2563eb,color:#fff
+    style GCA fill:#8b5cf6,stroke:#7c3aed,color:#fff
+    style GC fill:#ec4899,stroke:#db2777,color:#fff
+    style GL fill:#f59e0b,stroke:#d97706,color:#fff
+    style GD fill:#10b981,stroke:#059669,color:#fff
+    style GT fill:#ef4444,stroke:#dc2626,color:#fff
+        </pre>
+      </div>
+      <noscript>
+        <pre><code>
+gosu-parent
+  ├── gosu-core-api
+  │     ├── gosu-core
+  │     │     ├── gosu-lab
+  │     │     ├── gosu-doc
+  │     │     └── gosu-maven-compiler
+  │     ├── gosu-ant-tools
+  │     ├── gosu-test-api
+  │     │     └── gosu-test
+  │     └── gosu-core-api-precompiled
+  ├── gosu
+  └── gosu-process
+        </code></pre>
+      </noscript>
+    </div>
+  </div>
+
+  <div id="phase2" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="phase-badge">2</span>
+      <h3>Compilation Pipeline Deep-Dive</h3>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="section-body">
+      <p>The Gosu compiler processes source files through a <strong>4-phase pipeline</strong>:</p>
+      <table>
+        <tr><th>#</th><th>Phase</th><th>Key Class</th><th>Description</th></tr>
+        <tr><td>1</td><td>Tokenization</td><td><code class="inline-code">GosuLexer</code></td><td>Converts source text into a stream of tokens</td></tr>
+        <tr><td>2</td><td>Parsing (multi-pass)</td><td><code class="inline-code">GosuParser</code>, <code class="inline-code">GosuClassParser</code></td><td>Two-pass for programs, three-pass for classes (declarations, definitions, verification)</td></tr>
+        <tr><td>3</td><td>IR Generation</td><td><code class="inline-code">IRClassCompiler</code></td><td>Converts parse tree to Intermediate Representation</td></tr>
+        <tr><td>4</td><td>Bytecode Emission</td><td><code class="inline-code">IRClassCompiler</code> + ASM</td><td>Transforms IR to JVM bytecode via ASM 9.7</td></tr>
+      </table>
+
+      <h4 class="subheading">Two-pass program parsing</h4>
+      <p><code class="inline-code">gosu-core/src/main/java/gw/internal/gosu/parser/GosuParser.java:728-748</code></p>
+      <pre><code>          //
+          for( ISymbol function = parseFunctionOrPropertyDeclaration( program );
+               function != null; function = parseFunctionOrPropertyDeclaration( program ) )
+          {
+            _symTable.putSymbol( function );
+          }
+
+          //
+          // Next we have to reset the tokenizer to the beginning.
+          //
+          _tokenizer.reset();
+          _locations.clear();
+
+          //
+          // Now parse the program as normal....
+          //
+
+          // Note function definitions are parsed as no-op statements, but are
+          // pushed onto the dynamic function symobl stack.
+          Statement mainStatement = parseStatements( getScriptPart(), false, false );
+</code></pre>
+
+      <h4 class="subheading">Three-pass class parsing</h4>
+      <p><code class="inline-code">gosu-core/src/main/java/gw/internal/gosu/parser/GosuClassParser.java:407-435</code></p>
+      <pre><code>            //
+            // Reset the tokenizer to prepare for secon.. er third pass
+            //
+            getTokenizer().reset();
+            if( isTopLevelClass( gsClass ) || TypeLord.isEvalProgram( gsClass ) )
+            {
+              getLocationsList().clear();
+            }
+            else
+            {
+              removeInnerClassDelcarationsFromLocationsList( gsClass );
+            }
+
+            //
+            // Parse the whole class, including inner types
+            //
+            // Note function definitions are parsed as no-op statements, but are
+            // pushed onto the dynamic function symobl stack.
+            //## todo: do we really need to parse the header *again* (maybe for annotations?)
+            parseHeader(gsClass, false, false, true );
+
+            if( gsClass instanceof IGosuEnhancementInternal )
+            {
+              parseClassStatementAsEnhancement( gsClass );
+            }
+            else
+            {
+              parseClassStatement();
+            }</code></pre>
+
+      <h4 class="subheading">Bytecode emission sequence</h4>
+      <p><code class="inline-code">gosu-core/src/main/java/gw/internal/gosu/ir/compiler/bytecode/IRClassCompiler.java:85-121</code></p>
+      <pre><code>  private byte[] compile( )
+  {
+    GosuClassWriter writer = new GosuClassWriter();
+    StringWriter trace = configClassVisitor( writer );
+
+    try
+    {
+      compileClassHeader();
+
+      addSourceFileRef();
+
+      compileInnerClasses();
+
+      compileFields();
+
+      compileMethods();
+
+      addAnnotations();
+
+      addGosuVersion();
+
+      _cv.visitEnd();
+    }
+    finally
+    {
+      if( BytecodeOptions.shouldDebug( _irClass.getName() ))
+      {
+        System.out.println( &quot;========================================================================&quot; );
+        System.out.println( _irClass.getName() );
+        System.out.println( &quot;========================================================================&quot; );
+        System.out.println( trace );
+      }
+    }
+    byte[] bytes = writer.toByteArray();
+//    verify( bytes );
+    return bytes;
+  }</code></pre>
+
+      <h4 class="subheading">Structural type proxy generation</h4>
+      <p><code class="inline-code">gosu-core/src/main/java/gw/internal/gosu/ir/compiler/bytecode/expression/IRMethodCallExpressionCompiler.java:89-117</code></p>
+      <pre><code>  private static IRType maybeProxyStructuralCallRoot( IRMethodCallExpression expression, IRBytecodeContext context ) {
+    IRType ownersType = expression.getOwnersType();
+    if( ownersType.isStructural() ) {
+      // Generate the following: (note rootObject is top on the stack from the caller of this method)
+      //   if( rootObject instanceof &lt;structure-iface&gt; ) {
+      //     CheckCast and return existing instance
+      //   }
+      //   else {
+      //     Return proxy instance
+      //   }
+
+      MethodVisitor mv = context.getMv();
+      mv.visitInsn( Opcodes.DUP ); // dup the root value
+      mv.visitTypeInsn( INSTANCEOF, ownersType.getSlashName() );
+      Label labelProxy = new Label();
+      mv.visitJumpInsn( IFEQ, labelProxy );
+      mv.visitTypeInsn( CHECKCAST, ownersType.getSlashName() );
+      Label labelEnd = new Label();
+      mv.visitJumpInsn( GOTO, labelEnd );
+      mv.visitLabel( labelProxy );
+      mv.visitLdcInsn( Type.getType( ownersType.getDescriptor() ) );
+      mv.visitMethodInsn( Opcodes.INVOKESTATIC,
+                          IRMethodCallExpressionCompiler.class.getName().replace( '.', '/' ),
+                          &quot;constructProxy&quot;,
+                          &quot;(Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;&quot; );
+      mv.visitLabel( labelEnd );
+      return ownersType;
+    }
+    return null;</code></pre>
+
+    </div>
+  </div>
+
+  <div id="phase3" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="phase-badge">3</span>
+      <h3>Code Quality Issues</h3>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="section-body">
+      <h4 class="subheading">3a. Silently Swallowed Exceptions</h4>
+      <p>Found <strong>294</strong> empty or comment-only catch blocks:</p>
+      <table>
+        <tr><th>File</th><th>Line</th><th>Code Snippet</th></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/Configuration.java</code></td><td>405</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>                } catch (NumberFormatException e) {
+                    //Set to -1 so that warning will be printed
+                    //to indicate what is valid argument.
+                    source</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/Configuration.java</code></td><td>645</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>            } catch (IOException exc) {
+            }
+        }
+        return true;
+    }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/Content.java</code></td><td>38</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (IOException e) {
+            // cannot happen from StringWriter
+            throw new DocletAbortException(e);
+        }
+        return out.toString();
+    }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/builders/SerializedFormBuilder.java</code></td><td>524</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (NullPointerException e) {
+            //Workaround for null pointer bug in ClassDoc.superclassType().
+            return false;
+        }
+        if (cd.isSerializable()) {
+          </code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/util/Extern.java</code></td><td>291</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (MalformedURLException e) {
+            //Since exception is thrown, this must be a directory path.
+            return false;
+        }
+    }
+}</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/util/DocFile.java</code></td><td>123</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        catch (FileNotFoundException | SecurityException exc) {
+        }
+    }
+
+    /**
+     * Copy the contents of a resource file to this file.</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/taglets/TagletManager.java</code></td><td>284</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Exception e) {
+            // do nothing
+            e.printStackTrace();
+        }
+    }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/taglets/TagletWriter.java</code></td><td>212</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>            } catch (IllegalArgumentException e) {
+                //The taglet does not take a member as an argument.  Let's try
+                //a single tag.
+                gw.gosudoc.com.sun.jav</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/JavaScriptScanner.java</code></td><td>243</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (ParseException e) {
+        }
+    }
+
+    private static enum WhitespaceRetentionPolicy {
+        RETAIN_ALL,</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/Start.java</code></td><td>218</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch ( gw.gosudoc.com.sun.tools.javadoc.main.Messager.ExitJavadoc exc) {
+            // ignore, we just exit this way
+        } catch (OutOfMemoryError ee) {
+            messager.error( gw.</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/Start.java</code></td><td>223</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (ClientCodeException e) {
+            // simply rethrow these exceptions, to be caught and handled by JavadocTaskImpl
+            throw e;
+        } catch (Error ee) {
+            ee.p</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/Start.java</code></td><td>240</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>                } catch (IOException ignore) {
+                }
+            }
+            messager.exitNotice();
+            messager.flush();
+        }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/ClassDocImpl.java</code></td><td>678</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (CompletionFailure e) {
+            // quietly ignore completion failures
+        }
+    }
+
+    /**</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/ClassDocImpl.java</code></td><td>1213</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (CompletionFailure ex) {
+            // quietly ignore completion failures
+            return false;
+        }
+    }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/ClassDocImpl.java</code></td><td>1226</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (CompletionFailure ex) {
+            // quietly ignore completion failures
+            return false;
+        }
+    }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/JavadocTool.java</code></td><td>200</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Abort ex) {}
+
+        if (messager.nerrors() != 0)
+            return null;
+
+        return new RootDocImpl(docenv, listClasses(classTrees.toList()), List.from(includedPackages), opti</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/DocletInvoker.java</code></td><td>162</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (ClassNotFoundException e) {
+        }
+
+        // Condition 2.
+        try {
+            if (getClass() == sysCL.loadClass(getClass().getName())) {</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/DocletInvoker.java</code></td><td>175</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (ClassNotFoundException e) {
+        }
+
+        return ctxCL;
+    }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-doc/src/main/java/gw/gosudoc/com/sun/tools/javadoc/main/DocletInvoker.java</code></td><td>370</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        } catch (Exception e) {
+            // do nothing
+        }
+    }
+
+    /**</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/Launcher.java</code></td><td>417</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        catch( NumberFormatException e )
+        {
+          // don't care
+        }
+      }
+    }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>554</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        catch( NumberFormatException nfe )
+        {
+          // ignore
+        }
+        getEditor().requestFocus();
+        EditorUtilities.fixSwingFocusBugWhenPopupCloses( EditorHost.this );</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>707</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        catch( BadLocationException e )
+        {
+          //ignore
+        }
+      }
+    }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>771</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>      catch( BadLocationException e )
+      {
+        //ignore
+      }
+    }
+    finally</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>840</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( BadLocationException e )
+    {
+      //ignore
+    }
+  }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>882</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( BadLocationException e )
+    {
+      // can't center
+    }
+  }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>898</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>      catch( BadLocationException e )
+      {
+        //throw new RuntimeException( e );
+      }
+    }
+  }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>1272</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( BadLocationException e1 )
+    {
+      // ignore
+    }
+  }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>1440</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( Exception e )
+    {
+      // ignore
+    }
+  }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/EditorHost.java</code></td><td>1863</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>          catch( InterruptedException e )
+          {
+            // ?
+          }
+        }
+      }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/JavadocPopup.java</code></td><td>149</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( Exception e )
+    {
+      // Do nothing
+    }
+    return false;
+  }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GotoTypePopup.java</code></td><td>248</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>      catch( PatternSyntaxException e )
+      {
+        // Skip
+      }
+    }
+    return filteredTypes;</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/CopyBuffer.java</code></td><td>58</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( Exception e )
+    {
+      // sometimes the clipboard doesn't open
+      return;
+    }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuEditor.java</code></td><td>494</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>          catch( BadLocationException e )
+          {
+            //throw new RuntimeException( e );
+          }
+        }
+      }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuEditor.java</code></td><td>750</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>          catch( RuntimeException e )
+          {
+            // eat potential TypeMayHaveBeenDeletedException
+          }
+        }
+      }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuEditor.java</code></td><td>1315</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( BadLocationException e )
+    {
+      //ignore
+    }
+  }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuEditor.java</code></td><td>1723</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( Exception e )
+    {
+      // never mind
+    }
+    return parseIssues;
+  }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuPanel.java</code></td><td>2129</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        catch( Exception e1 )
+        {
+          //throw new RuntimeException( e1 );
+        }
+      }
+    }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/BeanTree.java</code></td><td>233</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>      catch( Throwable t )
+      {
+        // ignore
+      }
+      if( beanInfo == null )
+      {</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/BeanTree.java</code></td><td>298</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( NumberFormatException nfe )
+    {
+      // Eat this
+    }
+
+    evaluateProperties();</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuDocument.java</code></td><td>162</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( Throwable t )
+    {
+      // Ok, what we are guarding against here is primarly a InnerClassNotFoundException. These can happen here in the UI
+      // Thread when the intellisense thread is</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuDocument.java</code></td><td>185</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( Throwable t )
+    {
+      // Ok, what we are guarding against here is primarly a InnerClassNotFoundException. These can happen here in the UI
+      // Thread when the intellisense thread is</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuDocument.java</code></td><td>283</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>      catch( Exception e )
+      {
+        // Eat it.
+      }
+    }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuDocument.java</code></td><td>334</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>          catch( BadLocationException e )
+          {
+            //ignore
+          }
+        }
+      }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/GosuStyleContext.java</code></td><td>679</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>      catch( Throwable e )
+      {
+        // can't adjust scanner... calling logic
+        // will simply render the remaining text.
+        editor.util.EditorUtilities.handleUncaughtException( e );
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/SmartFixManager.java</code></td><td>365</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>          catch( BadLocationException e )
+          {
+            //ignore
+          }
+          break;
+        }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/SmartFixManager.java</code></td><td>612</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( BadLocationException e )
+    {
+      //ignore
+    }
+  }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/SmartFixManager.java</code></td><td>628</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( BadLocationException e )
+    {
+      //ignore
+    }
+  }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/SmartFixManager.java</code></td><td>655</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>    catch( BadLocationException e )
+    {
+      //ignore
+    }
+  }
+</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/SmartFixManager.java</code></td><td>678</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>        catch( BadLocationException e )
+        {
+          //ignore
+        }
+      }
+    }</code></pre></td></tr>
+        <tr><td><code class="inline-code">gosu-lab/src/main/java/editor/SmartFixManager.java</code></td><td>1142</td><td><pre style="margin:0;border:0;padding:4px;font-size:11px;"><code>            catch( Exception e )
+            {
+              // ignore
+            }
+          }
+</code></pre></td></tr>
+        <tr><td colspan="3" style="text-align:center;color:var(--text-muted);">... and 244 more</td></tr>
+      </table>
+
+      <h4 class="subheading">3b. JDK Internal API Usage (--add-exports)</h4>
+      <p>Found <strong>20</strong> unique <code class="inline-code">--add-exports</code> flags across module POM files:</p>
+      <table>
+        <tr><th>Export</th><th>Risk</th><th>Locations</th></tr>
+        <tr><td><code class="inline-code">java.base/sun.reflect.annotation=ALL-UNNAMED</code></td><td><span class="badge badge-high">High</span></td><td><code class="inline-code">gosu-doc/pom.xml:144</code><br><code class="inline-code">gosu-lab/pom.xml:66</code><br><code class="inline-code">gosu-core/pom.xml:36</code><br><em>+3 more</em></td></tr>
+        <tr><td><code class="inline-code">java.base/sun.security.action=ALL-UNNAMED</code></td><td><span class="badge badge-high">High</span></td><td><code class="inline-code">gosu-lab/pom.xml:67</code><br><code class="inline-code">gosu-parent/pom.xml:99</code><br><code class="inline-code">gosu-parent/pom.xml:229</code></td></tr>
+        <tr><td><code class="inline-code">java.desktop/sun.awt.shell=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-lab/pom.xml:72</code><br><code class="inline-code">gosu-parent/pom.xml:104</code><br><code class="inline-code">gosu-parent/pom.xml:234</code></td></tr>
+        <tr><td><code class="inline-code">java.desktop/sun.awt=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-lab/pom.xml:71</code><br><code class="inline-code">gosu-parent/pom.xml:103</code><br><code class="inline-code">gosu-parent/pom.xml:233</code></td></tr>
+        <tr><td><code class="inline-code">java.desktop/sun.font=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-lab/pom.xml:68</code><br><code class="inline-code">gosu-parent/pom.xml:100</code><br><code class="inline-code">gosu-parent/pom.xml:230</code></td></tr>
+        <tr><td><code class="inline-code">java.desktop/sun.swing.icon=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-lab/pom.xml:70</code><br><code class="inline-code">gosu-parent/pom.xml:102</code><br><code class="inline-code">gosu-parent/pom.xml:232</code></td></tr>
+        <tr><td><code class="inline-code">java.desktop/sun.swing=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-lab/pom.xml:69</code><br><code class="inline-code">gosu-parent/pom.xml:101</code><br><code class="inline-code">gosu-parent/pom.xml:231</code></td></tr>
+        <tr><td><code class="inline-code">jdk.compiler/com.sun.tools.doclint=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-doc/pom.xml:143</code><br><code class="inline-code">gosu-parent/pom.xml:94</code><br><code class="inline-code">gosu-parent/pom.xml:224</code></td></tr>
+        <tr><td><code class="inline-code">jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-doc/pom.xml:137</code><br><code class="inline-code">gosu-parent/pom.xml:95</code><br><code class="inline-code">gosu-parent/pom.xml:225</code></td></tr>
+        <tr><td><code class="inline-code">jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-doc/pom.xml:134</code><br><code class="inline-code">gosu-lab/pom.xml:63</code><br><code class="inline-code">gosu-core/pom.xml:33</code><br><em>+3 more</em></td></tr>
+        <tr><td><code class="inline-code">jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-doc/pom.xml:135</code><br><code class="inline-code">gosu-parent/pom.xml:91</code><br><code class="inline-code">gosu-parent/pom.xml:221</code></td></tr>
+        <tr><td><code class="inline-code">jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-doc/pom.xml:104</code><br><code class="inline-code">gosu-doc/pom.xml:140</code><br><code class="inline-code">gosu-parent/pom.xml:97</code><br><em>+1 more</em></td></tr>
+        <tr><td><code class="inline-code">jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-doc/pom.xml:136</code><br><code class="inline-code">gosu-parent/pom.xml:92</code><br><code class="inline-code">gosu-parent/pom.xml:222</code></td></tr>
+        <tr><td><code class="inline-code">jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-doc/pom.xml:138</code></td></tr>
+        <tr><td><code class="inline-code">jdk.compiler/com.sun.tools.javac.platform=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-doc/pom.xml:142</code><br><code class="inline-code">gosu-parent/pom.xml:96</code><br><code class="inline-code">gosu-parent/pom.xml:226</code></td></tr>
+        <tr><td><code class="inline-code">jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-doc/pom.xml:105</code><br><code class="inline-code">gosu-doc/pom.xml:141</code><br><code class="inline-code">gosu-lab/pom.xml:64</code><br><em>+4 more</em></td></tr>
+        <tr><td><code class="inline-code">jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</code></td><td><span class="badge badge-medium">Medium</span></td><td><code class="inline-code">gosu-doc/pom.xml:103</code><br><code class="inline-code">gosu-doc/pom.xml:139</code><br><code class="inline-code">gosu-lab/pom.xml:65</code><br><em>+4 more</em></td></tr>
+        <tr><td><code class="inline-code">jdk.javadoc/jdk.javadoc.internal.doclets.formats.html=ALL-UNNAMED</code></td><td><span class="badge badge-low">Low</span></td><td><code class="inline-code">gosu-doc/pom.xml:133</code></td></tr>
+        <tr><td><code class="inline-code">jdk.javadoc/jdk.javadoc.internal.doclets.toolkit=ALL-UNNAMED</code></td><td><span class="badge badge-low">Low</span></td><td><code class="inline-code">gosu-doc/pom.xml:102</code></td></tr>
+        <tr><td><code class="inline-code">jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED</code></td><td><span class="badge badge-low">Low</span></td><td><code class="inline-code">gosu-doc/pom.xml:101</code><br><code class="inline-code">gosu-doc/pom.xml:132</code></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="phase4" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="phase-badge">4</span>
+      <h3>Security Audit</h3>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="section-body">
+      <table>
+        <tr><th>ID</th><th>Severity</th><th>Category</th><th>Finding</th><th>Location</th><th>Recommendation</th></tr>
+        <tr><td>SEC-001</td><td><span class="badge badge-pass">PASS</span></td><td>XXE Protection</td><td>XML parsers correctly disable external entities</td><td><code class="inline-code">Registry.java, SimpleXmlParser.java</code></td><td>No action needed. Continue to enforce XXE protections in new XML parsing code.</td></tr>
+        <tr><td>SEC-002</td><td><span class="badge badge-critical">HIGH</span></td><td>Vulnerable Library</td><td>jQuery 1.10.2 has known CVEs: CVE-2015-9251, CVE-2019-11358, CVE-2020-11022</td><td><code class="inline-code">gosu-doc/src/main/resources/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/resources/jquery/jquery-1.10.2.js</code></td><td>Upgrade to jQuery 3.7.x. If gosudoc output requires jQuery, bundle a modern version.</td></tr>
+        <tr><td>SEC-003</td><td><span class="badge badge-medium">MEDIUM</span></td><td>Outdated Plugin</td><td>maven-surefire-plugin 2.19.1 is significantly outdated (current: 3.x)</td><td><code class="inline-code">gosu-parent/pom.xml lines 122-127</code></td><td>Upgrade to maven-surefire-plugin 3.2.x for better JDK 11+ support and security fixes.</td></tr>
+        <tr><td>SEC-004</td><td><span class="badge badge-medium">MEDIUM</span></td><td>Unsafe Reflection</td><td>setAccessible() used on private constructors/fields in IRClassCompiler</td><td><code class="inline-code">gosu-core/.../bytecode/IRClassCompiler.java lines 123-140</code></td><td>Document the necessity. Consider using MethodHandles.Lookup with proper access where possible.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="phase5" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="phase-badge">5</span>
+      <h3>Test Coverage Analysis</h3>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="section-body">
+      <table>
+        <tr><th>Module</th><th>Java Tests</th><th>Gosu Tests</th><th>Total</th><th>Test Pattern</th><th>Coverage Rating</th></tr>
+        <tr><td><code class="inline-code">gosu</code></td><td>0</td><td>0</td><td>0</td><td></td><td><span class="badge badge-none">None</span></td></tr>
+        <tr><td><code class="inline-code">gosu-ant-tools</code></td><td>12</td><td>17</td><td>29</td><td>JUnit tests</td><td><span class="badge badge-moderate">Moderate</span></td></tr>
+        <tr><td><code class="inline-code">gosu-core</code></td><td>0</td><td>0</td><td>0</td><td></td><td><span class="badge badge-none">None</span></td></tr>
+        <tr><td><code class="inline-code">gosu-core-api</code></td><td>2</td><td>0</td><td>2</td><td>JUnit tests</td><td><span class="badge badge-low">Low</span></td></tr>
+        <tr><td><code class="inline-code">gosu-core-api-precompiled</code></td><td>0</td><td>0</td><td>0</td><td></td><td><span class="badge badge-none">None</span></td></tr>
+        <tr><td><code class="inline-code">gosu-process</code></td><td>0</td><td>0</td><td>0</td><td></td><td><span class="badge badge-none">None</span></td></tr>
+        <tr><td><code class="inline-code">gosu-lab</code></td><td>4</td><td>1</td><td>5</td><td>JUnit tests</td><td><span class="badge badge-low">Low</span></td></tr>
+        <tr><td><code class="inline-code">gosu-doc</code></td><td>0</td><td>19</td><td>19</td><td>JUnit tests</td><td><span class="badge badge-moderate">Moderate</span></td></tr>
+        <tr><td><code class="inline-code">gosu-maven-compiler</code></td><td>1</td><td>0</td><td>1</td><td>JUnit tests</td><td><span class="badge badge-low">Low</span></td></tr>
+        <tr><td><code class="inline-code">gosu-parent</code></td><td>0</td><td>0</td><td>0</td><td></td><td><span class="badge badge-none">None</span></td></tr>
+        <tr><td><code class="inline-code">gosu-test</code></td><td>532</td><td>2584</td><td>3116</td><td>BaseVerifyErrantTest + processErrantType; spec/specContrib tests</td><td><span class="badge badge-good">Good</span></td></tr>
+        <tr><td><code class="inline-code">gosu-test-api</code></td><td>0</td><td>0</td><td>0</td><td></td><td><span class="badge badge-none">None</span></td></tr>
+      </table>
+
+      <h4 class="subheading">Notable Test Patterns</h4>
+      <div class="note">
+        <strong>Errant Test Pattern:</strong> <code class="inline-code">BaseVerifyErrantTest</code> + <code class="inline-code">processErrantType</code> —
+        Tests that verify the compiler correctly reports errors on intentionally malformed Gosu source files.
+      </div>
+
+      <h4 class="subheading">Coverage Gaps</h4>
+      <ul>
+        <li><code class="inline-code">gosu</code> — no test directory</li>
+        <li><code class="inline-code">gosu-core</code> — no test directory</li>
+        <li><code class="inline-code">gosu-core-api-precompiled</code> — no test directory</li>
+        <li><code class="inline-code">gosu-process</code> — no test directory</li>
+        <li><code class="inline-code">gosu-parent</code> — no test directory</li>
+        <li><code class="inline-code">gosu-test-api</code> — no test directory</li>
+        <li><code class="inline-code">IRClassCompiler</code> — no direct unit tests for bytecode emission</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="phase6" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="phase-badge">6</span>
+      <h3>CI/CD Pipeline Analysis</h3>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="section-body">
+      <table>
+        <tr><th>Workflow</th><th>Issue</th><th>Severity</th><th>Recommendation</th></tr>
+        <tr><td><code class="inline-code">build-test.yml</code></td><td>Redundant cache step (lines 33-39) after setup-java already caches Maven deps (line 28)</td><td><span class="badge badge-low">Low</span></td><td>Remove the manual actions/cache step; setup-java with cache: maven handles it.</td></tr>
+        <tr><td><code class="inline-code">build-test.yml</code></td><td>No matrix testing — only Java 11. No Java 17/21 coverage.</td><td><span class="badge badge-medium">Medium</span></td><td>Add a matrix strategy with java-version: [11, 17] to catch forward-compat issues.</td></tr>
+        <tr><td><code class="inline-code">build-test.yml</code></td><td>Test summary parsing uses fragile glob (**/) that may not expand in GitHub Actions shell</td><td><span class="badge badge-low">Low</span></td><td>Use find -name &quot;TEST-*.xml&quot; instead of glob patterns for reliability.</td></tr>
+        <tr><td><code class="inline-code">publish-snapshots.yml</code></td><td>Hardcoded owner: 'gosu-lang', repo: 'gosu-lang' (lines 27-28) won't work in forks</td><td><span class="badge badge-medium">Medium</span></td><td>Use context.repo.owner and context.repo.repo instead of hardcoded values.</td></tr>
+        <tr><td><code class="inline-code">release-gosu.yml</code></td><td>Same hardcoded owner/repo at lines 47-48; fails in forks</td><td><span class="badge badge-medium">Medium</span></td><td>Use context.repo.owner and context.repo.repo.</td></tr>
+        <tr><td><code class="inline-code">release-gosu.yml</code></td><td>GPG import step (line 86-88) runs even if permission check fails — missing 'if' condition</td><td><span class="badge badge-high">High</span></td><td>Add if: steps.check-perms.outputs.can-publish == 'true' to GPG import and release steps.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="phase7" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="phase-badge">7</span>
+      <h3>Documentation Gaps</h3>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="section-body">
+      <table>
+        <tr><th>Gap</th><th>Location</th><th>Impact</th><th>Priority</th></tr>
+        <tr><td>No CONTRIBUTING.md</td><td><code class="inline-code">repo root</code></td><td>New contributors lack guidance on module structure, coding standards, and PR process</td><td><span class="badge badge-high">High</span></td></tr>
+        <tr><td>No ARCHITECTURE.md</td><td><code class="inline-code">repo root</code></td><td>No high-level overview of the multi-module structure and compilation pipeline</td><td><span class="badge badge-high">High</span></td></tr>
+        <tr><td>README.md line 50 says &quot;JDK 1.11&quot; — should be &quot;JDK 11&quot;</td><td><code class="inline-code">README.md:50</code></td><td>Confusing version naming; JDK 1.11 does not exist</td><td><span class="badge badge-medium">Medium</span></td></tr>
+        <tr><td>README.md line 51 says &quot;JDK 1.11&quot; — should be &quot;JDK 11&quot;</td><td><code class="inline-code">README.md:51</code></td><td>Confusing version naming; JDK 1.11 does not exist</td><td><span class="badge badge-medium">Medium</span></td></tr>
+        <tr><td>README.md line 69 says &quot;JDK 1.11&quot; — should be &quot;JDK 11&quot;</td><td><code class="inline-code">README.md:69</code></td><td>Confusing version naming; JDK 1.11 does not exist</td><td><span class="badge badge-medium">Medium</span></td></tr>
+        <tr><td>types.rst has placeholder &quot;XXX&quot; references at lines 102, 103, 104, 219, 293, 295, 302</td><td><code class="inline-code">gosu-test/src/test/gosu/gw/specification/doc/types.rst</code></td><td>Incomplete specification documentation</td><td><span class="badge badge-low">Low</span></td></tr>
+        <tr><td>Registry.java lacks Javadoc on public class</td><td><code class="inline-code">gosu-core-api/src/main/java/gw/config/Registry.java</code></td><td>Public API classes should document their purpose and usage</td><td><span class="badge badge-medium">Medium</span></td></tr>
+        <tr><td>GosuInitialization.java lacks Javadoc on public class</td><td><code class="inline-code">gosu-core-api/src/main/java/gw/lang/init/GosuInitialization.java</code></td><td>Public API classes should document their purpose and usage</td><td><span class="badge badge-medium">Medium</span></td></tr>
+        <tr><td>--add-exports requirements not documented for IDE setup</td><td><code class="inline-code">README.md / CONTRIBUTING.md (missing)</code></td><td>Developers configuring IDEs must discover --add-exports flags from pom.xml by trial and error</td><td><span class="badge badge-medium">Medium</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="phase8" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="phase-badge">8</span>
+      <h3>Concrete Implementation Recommendations</h3>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="section-body">
+      <p>Top 5 actionable improvements, ordered by impact-to-effort ratio:</p>
+
+      <div class="rec-card">
+        <h4>#1. Fix CI cache ordering and add Java 17 matrix testing</h4>
+        <div class="meta">
+          <span>Effort: <strong>Low (1-2 hours)</strong></span>
+          <span>Impact: <strong>Medium</strong></span>
+        </div>
+        <p>Remove redundant cache step in build-test.yml. Add matrix strategy with java-version: [11, 17] to catch forward-compatibility issues early.</p>
+      </div>
+
+      <div class="rec-card">
+        <h4>#2. Fix hardcoded owner/repo in workflow permission checks</h4>
+        <div class="meta">
+          <span>Effort: <strong>Low (30 min)</strong></span>
+          <span>Impact: <strong>High</strong></span>
+        </div>
+        <p>Replace hardcoded gosu-lang/gosu-lang with context.repo.owner/context.repo.repo in publish-snapshots.yml and release-gosu.yml. Add missing if-condition for GPG import step.</p>
+      </div>
+
+      <div class="rec-card">
+        <h4>#3. Upgrade jQuery 1.10.2 to 3.7.x in gosu-doc</h4>
+        <div class="meta">
+          <span>Effort: <strong>Low (1 hour)</strong></span>
+          <span>Impact: <strong>High</strong></span>
+        </div>
+        <p>jQuery 1.10.2 has 3 known CVEs. Replace with jQuery 3.7.1 minified. Test gosudoc output to verify no breaking API changes.</p>
+      </div>
+
+      <div class="rec-card">
+        <h4>#4. Add CONTRIBUTING.md with module overview and build setup</h4>
+        <div class="meta">
+          <span>Effort: <strong>Medium (4-6 hours)</strong></span>
+          <span>Impact: <strong>Medium</strong></span>
+        </div>
+        <p>Document the 12-module structure, compilation pipeline, --add-exports requirements for IDE setup, and test patterns (BaseVerifyErrantTest, spec/specContrib).</p>
+      </div>
+
+      <div class="rec-card">
+        <h4>#5. Fix README.md JDK version naming</h4>
+        <div class="meta">
+          <span>Effort: <strong>Trivial (5 min)</strong></span>
+          <span>Impact: <strong>Low</strong></span>
+        </div>
+        <p>Change &quot;JDK 1.11&quot; to &quot;JDK 11&quot; on lines 50 and 69 of README.md. &quot;JDK 1.11&quot; is a non-existent version that confuses new developers.</p>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- .main -->
+
+<!-- Download Button -->
+<button class="download-btn" onclick="window.print()">&#128196; Download PDF</button>
+
+<!-- Mermaid.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  // Initialize Mermaid
+  try {
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default',
+      securityLevel: 'loose'
+    });
+  } catch(e) {
+    // Mermaid CDN failed; the ASCII fallback in noscript is fine
+    console.warn('Mermaid.js not loaded; using fallback diagram');
+  }
+
+  // Toggle sections
+  function toggleSection(header) {
+    header.parentElement.classList.toggle('collapsed');
+  }
+
+  // Theme toggle
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.getElementById('theme-icon').textContent = next === 'dark' ? '\u2600' : '\u263E';
+    localStorage.setItem('sdlc-theme', next);
+    // Re-init mermaid for theme
+    try {
+      mermaid.initialize({ theme: next === 'dark' ? 'dark' : 'default', securityLevel: 'loose' });
+    } catch(e) {}
+  }
+
+  // Restore theme
+  (function() {
+    const saved = localStorage.getItem('sdlc-theme');
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+      if (saved === 'dark') document.getElementById('theme-icon').textContent = '\u2600';
+    }
+  })();
+
+  // Active sidebar nav
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+        const id = entry.target.id;
+        const link = document.querySelector('.sidebar nav a[href="#' + id + '"]');
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -80% 0px' });
+
+  document.querySelectorAll('.section, #dashboard').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
