@@ -1787,7 +1787,7 @@ public class HtmlDocletWriter extends HtmlDocWriter
             head.addContent(new RawHtml("<!--[if IE]>"));
             addJQueryFile(head, DocPaths.JSZIPUTILS_IE_MIN);
             head.addContent(new RawHtml("<![endif]-->"));
-            addJQueryFile(head, DocPaths.JQUERY_JS_1_10);
+            addJQueryFile(head, DocPaths.JQUERY_JS_3_7);
             addJQueryFile(head, DocPaths.JQUERY_JS);
         }
     }
