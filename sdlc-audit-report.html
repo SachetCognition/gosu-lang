@@ -406,7 +406,7 @@ code {
 <!-- Sidebar -->
 <aside class="sidebar">
   <h2>SDLC Audit</h2>
-  <div class="subtitle">gosu-lang &middot; 2026-06-02 21:19:17 UTC</div>
+  <div class="subtitle">gosu-lang &middot; 2026-06-02 21:24:43 UTC</div>
   <nav>
     <a href="#dashboard"><span class="phase-num">&bull;</span> Dashboard</a>
     <a href="#phase1"><span class="phase-num">1</span> Architecture</a>
@@ -429,13 +429,13 @@ code {
 <div class="main">
 
   <h1 style="font-size:28px; margin-bottom:4px;">SDLC Audit Report</h1>
-  <p style="color:var(--text-muted); margin-bottom:32px;">gosu-lang v1.18.8-SNAPSHOT &middot; Generated 2026-06-02 21:19:17 UTC</p>
+  <p style="color:var(--text-muted); margin-bottom:32px;">gosu-lang v1.18.8-SNAPSHOT &middot; Generated 2026-06-02 21:24:43 UTC</p>
 
   <!-- Dashboard -->
   <div id="dashboard" class="dashboard">
     <div class="dash-card">
       <div class="label">Total Findings</div>
-      <div class="value">351</div>
+      <div class="value">350</div>
     </div>
     <div class="dash-card critical">
       <div class="label">High / Critical</div>
@@ -447,7 +447,7 @@ code {
     </div>
     <div class="dash-card low">
       <div class="label">Low</div>
-      <div class="value">338</div>
+      <div class="value">337</div>
     </div>
     <div class="dash-card pass">
       <div class="label">Modules Analyzed</div>
@@ -467,18 +467,18 @@ code {
       <p>The root <code class="inline-code">pom.xml</code> (lines 20-31) defines <strong>12</strong> modules:</p>
       <table>
         <tr><th>Module</th><th>Internal Dependencies</th></tr>
-        <tr><td><code class="inline-code">gosu</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-lab</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-doc</code></td></tr>
-        <tr><td><code class="inline-code">gosu-ant-tools</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-doc</code></td></tr>
-        <tr><td><code class="inline-code">gosu-core</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code></td></tr>
-        <tr><td><code class="inline-code">gosu-core-api</code></td><td><code class="inline-code">gw-jcommander</code>, <code class="inline-code">gw-asm-all</code>, <code class="inline-code">gosu-parent</code></td></tr>
-        <tr><td><code class="inline-code">gosu-core-api-precompiled</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-maven-compiler</code></td></tr>
-        <tr><td><code class="inline-code">gosu-process</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code></td></tr>
-        <tr><td><code class="inline-code">gosu-lab</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code></td></tr>
-        <tr><td><code class="inline-code">gosu-doc</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-maven-compiler</code></td></tr>
-        <tr><td><code class="inline-code">gosu-maven-compiler</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code></td></tr>
+        <tr><td><code class="inline-code">gosu</code></td><td><code class="inline-code">gosu-lab</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-doc</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core-api</code></td></tr>
+        <tr><td><code class="inline-code">gosu-ant-tools</code></td><td><code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-doc</code>, <code class="inline-code">gosu-core-api</code></td></tr>
+        <tr><td><code class="inline-code">gosu-core</code></td><td><code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core-api</code></td></tr>
+        <tr><td><code class="inline-code">gosu-core-api</code></td><td><code class="inline-code">gosu-parent</code>, <code class="inline-code">gw-asm-all</code>, <code class="inline-code">gw-jcommander</code></td></tr>
+        <tr><td><code class="inline-code">gosu-core-api-precompiled</code></td><td><code class="inline-code">gosu-maven-compiler</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core-api</code></td></tr>
+        <tr><td><code class="inline-code">gosu-process</code></td><td><code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code></td></tr>
+        <tr><td><code class="inline-code">gosu-lab</code></td><td><code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code></td></tr>
+        <tr><td><code class="inline-code">gosu-doc</code></td><td><code class="inline-code">gosu-maven-compiler</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core-api</code></td></tr>
+        <tr><td><code class="inline-code">gosu-maven-compiler</code></td><td><code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-core-api</code></td></tr>
         <tr><td><code class="inline-code">gosu-parent</code></td><td><span style="color:var(--text-muted)">none</span></td></tr>
-        <tr><td><code class="inline-code">gosu-test</code></td><td><code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-test-api</code>, <code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-maven-compiler</code></td></tr>
-        <tr><td><code class="inline-code">gosu-test-api</code></td><td><code class="inline-code">gosu-core-api</code>, <code class="inline-code">gosu-parent</code></td></tr>
+        <tr><td><code class="inline-code">gosu-test</code></td><td><code class="inline-code">gosu-maven-compiler</code>, <code class="inline-code">gosu-core</code>, <code class="inline-code">gosu-test-api</code>, <code class="inline-code">gosu-parent</code></td></tr>
+        <tr><td><code class="inline-code">gosu-test-api</code></td><td><code class="inline-code">gosu-parent</code>, <code class="inline-code">gosu-core-api</code></td></tr>
       </table>
 
       <h4 class="subheading">Key External Dependencies</h4>

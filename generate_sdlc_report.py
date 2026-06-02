@@ -604,7 +604,7 @@ def generate_html(phase1, phase2, phase3, phase4, phase5, phase6, phase7, recomm
     total_findings = (
         len(phase3['empty_catches']) +
         len(set(e['export'] for e in phase3['add_exports'])) +
-        len(phase4) +
+        sum(1 for f in phase4 if f['severity'] != 'PASS') +
         len(phase6) +
         len(phase7)
     )
@@ -1096,8 +1096,8 @@ code {{
 '''
     for mod in phase1['modules']:
         deps = phase1['dep_map'].get(mod, [])
-        dep_str = ', '.join(f'<code class="inline-code">{d}</code>' for d in deps) if deps else '<span style="color:var(--text-muted)">none</span>'
-        html += f'        <tr><td><code class="inline-code">{mod}</code></td><td>{dep_str}</td></tr>\n'
+        dep_str = ', '.join(f'<code class="inline-code">{html_escape(d)}</code>' for d in deps) if deps else '<span style="color:var(--text-muted)">none</span>'
+        html += f'        <tr><td><code class="inline-code">{html_escape(mod)}</code></td><td>{dep_str}</td></tr>\n'
 
     html += '''      </table>
 
