@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contributing to Gosu</title>
+  <title>Gosu Project &mdash; CI, Security &amp; Contributor Guide</title>
   <style>
     :root {
       --bg: #ffffff;
@@ -15,7 +15,12 @@
       --table-stripe: #f6f8fa;
       --success: #1a7f37;
       --warn: #9a6700;
+      --danger: #cf222e;
       --link: #0969da;
+      --diff-add-bg: #dafbe1;
+      --diff-add-fg: #116329;
+      --diff-del-bg: #ffebe9;
+      --diff-del-fg: #82071e;
     }
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -23,23 +28,14 @@
       line-height: 1.6;
       color: var(--fg);
       background: var(--bg);
-      max-width: 960px;
+      max-width: 1000px;
       margin: 0 auto;
       padding: 2rem 1.5rem;
     }
-    h1 {
-      font-size: 2rem;
-      border-bottom: 2px solid var(--accent);
-      padding-bottom: 0.5rem;
-      margin-top: 0;
-    }
-    h2 {
-      font-size: 1.5rem;
-      margin-top: 2.5rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.3rem;
-    }
-    h3 { font-size: 1.2rem; margin-top: 1.8rem; }
+    h1 { font-size: 2.2rem; border-bottom: 3px solid var(--accent); padding-bottom: 0.5rem; margin-top: 0; }
+    h2 { font-size: 1.6rem; margin-top: 3rem; border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+    h3 { font-size: 1.25rem; margin-top: 2rem; }
+    h4 { font-size: 1.05rem; margin-top: 1.5rem; }
     a { color: var(--link); text-decoration: none; }
     a:hover { text-decoration: underline; }
     code {
@@ -55,29 +51,13 @@
       border-radius: 6px;
       padding: 1rem;
       overflow-x: auto;
-      font-size: 0.875rem;
+      font-size: 0.85rem;
       line-height: 1.5;
     }
-    pre code {
-      background: none;
-      padding: 0;
-      border-radius: 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1rem 0;
-    }
-    th, td {
-      text-align: left;
-      padding: 0.6rem 0.8rem;
-      border: 1px solid var(--border);
-    }
-    th {
-      background: var(--accent);
-      color: #fff;
-      font-weight: 600;
-    }
+    pre code { background: none; padding: 0; border-radius: 0; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th, td { text-align: left; padding: 0.6rem 0.8rem; border: 1px solid var(--border); }
+    th { background: var(--accent); color: #fff; font-weight: 600; }
     tr:nth-child(even) td { background: var(--table-stripe); }
     blockquote {
       border-left: 4px solid var(--accent);
@@ -89,55 +69,339 @@
     blockquote p { margin: 0.4rem 0; }
     .badge {
       display: inline-block;
-      padding: 0.15em 0.6em;
+      padding: 0.2em 0.7em;
       border-radius: 12px;
       font-size: 0.8rem;
       font-weight: 600;
       color: #fff;
+      vertical-align: middle;
     }
-    .badge-required { background: #cf222e; }
-    .badge-recommended { background: var(--success); }
+    .badge-task1 { background: #0969da; }
+    .badge-task2 { background: #8250df; }
+    .badge-task3 { background: var(--danger); }
+    .badge-task4 { background: var(--success); }
+    .badge-required { background: var(--danger); }
+    .badge-removed { background: #6e7781; }
+    .badge-added { background: var(--success); }
+
     .toc { background: var(--accent-light); border-radius: 8px; padding: 1rem 1.5rem; margin: 1.5rem 0; }
     .toc h2 { margin-top: 0; border: none; font-size: 1.2rem; }
     .toc ol { margin: 0; padding-left: 1.5rem; }
     .toc li { margin: 0.3rem 0; }
-    .tree { font-family: monospace; white-space: pre; background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; overflow-x: auto; font-size: 0.875rem; }
+    .toc ol ol { margin-top: 0.2rem; }
+
+    .diff { font-family: monospace; font-size: 0.85rem; line-height: 1.6; border: 1px solid var(--border); border-radius: 6px; overflow-x: auto; margin: 1rem 0; }
+    .diff-line { padding: 0.1rem 0.8rem; white-space: pre; }
+    .diff-del { background: var(--diff-del-bg); color: var(--diff-del-fg); }
+    .diff-add { background: var(--diff-add-bg); color: var(--diff-add-fg); }
+    .diff-ctx { background: var(--code-bg); color: #656d76; }
+    .diff-hdr { background: #ddf4ff; color: #0550ae; font-weight: 600; }
+
     .note { padding: 0.75rem 1rem; border-radius: 6px; margin: 1rem 0; }
     .note-tip { background: #dafbe1; border-left: 4px solid var(--success); }
     .note-warn { background: #fff8c5; border-left: 4px solid var(--warn); }
+    .note-danger { background: #ffebe9; border-left: 4px solid var(--danger); }
+    .note-info { background: #ddf4ff; border-left: 4px solid #0969da; }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .phase-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .phase1 .phase-num { background: #0969da; }
+    .phase2 .phase-num { background: #8250df; }
+    .phase3 .phase-num { background: var(--danger); }
+    .phase4 .phase-num { background: var(--success); }
+
+    .file-list { list-style: none; padding: 0; }
+    .file-list li { padding: 0.3rem 0; }
+    .file-list li::before { content: "📄 "; }
+
+    .tree { font-family: monospace; white-space: pre; background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; overflow-x: auto; font-size: 0.85rem; }
+
+    summary { cursor: pointer; font-weight: 600; padding: 0.4rem 0; }
+    details { margin: 0.5rem 0; }
+
     footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.85rem; color: #656d76; }
   </style>
 </head>
 <body>
 
-<h1>Contributing to Gosu</h1>
-<p>Thank you for your interest in contributing to the Gosu programming language! This guide covers everything you need to get started.</p>
+<h1>Gosu Project &mdash; CI, Security &amp; Contributor Guide</h1>
+<p>This document covers all four improvement phases applied to the
+<a href="https://github.com/gosu-lang/gosu-lang">gosu-lang</a> repository:
+CI workflow fixes, fork-safe permission checks, a jQuery security upgrade, and
+comprehensive contributor documentation.</p>
 
+<!-- ============================================================ -->
 <nav class="toc">
   <h2>Table of Contents</h2>
   <ol>
-    <li><a href="#prerequisites">Prerequisites</a></li>
-    <li><a href="#building">Building</a></li>
-    <li><a href="#add-exports">--add-exports Requirements &amp; IDE Setup</a></li>
-    <li><a href="#modules">Module Overview</a></li>
-    <li><a href="#test-patterns">Test Patterns</a>
+    <li><a href="#task1">Task 1: Fix CI Cache Ordering &amp; Add Matrix Testing</a>
       <ol>
-        <li><a href="#errant-tests">Errant Type Tests</a></li>
-        <li><a href="#spec-tests">Specification Tests</a></li>
+        <li><a href="#task1-problem">Problem</a></li>
+        <li><a href="#task1-changes">Changes</a></li>
+        <li><a href="#task1-matrix">Build Matrix Details</a></li>
+        <li><a href="#task1-workflow">Final Workflow</a></li>
       </ol>
     </li>
-    <li><a href="#pr-guidelines">PR Guidelines</a></li>
-    <li><a href="#links">Useful Links</a></li>
+    <li><a href="#task2">Task 2: Fix Hardcoded Permission Checks</a>
+      <ol>
+        <li><a href="#task2-problem">Problem</a></li>
+        <li><a href="#task2-diff">Diff</a></li>
+        <li><a href="#task2-files">Affected Files</a></li>
+      </ol>
+    </li>
+    <li><a href="#task3">Task 3: Upgrade Vulnerable jQuery in gosu-doc</a>
+      <ol>
+        <li><a href="#task3-vulnerability">Vulnerability</a></li>
+        <li><a href="#task3-changes">Changes</a></li>
+        <li><a href="#task3-api">API Compatibility Audit</a></li>
+        <li><a href="#task3-java">Java Reference Updates</a></li>
+      </ol>
+    </li>
+    <li><a href="#task4">Task 4: Add CONTRIBUTING.md</a>
+      <ol>
+        <li><a href="#task4-prereqs">Prerequisites</a></li>
+        <li><a href="#task4-building">Building</a></li>
+        <li><a href="#task4-exports">--add-exports &amp; IDE Setup</a></li>
+        <li><a href="#task4-modules">Module Overview</a></li>
+        <li><a href="#task4-tests">Test Patterns</a></li>
+        <li><a href="#task4-pr">PR Guidelines</a></li>
+      </ol>
+    </li>
   </ol>
 </nav>
 
-<!-- ================================================ -->
-<h2 id="prerequisites">Prerequisites</h2>
+<!-- ============================================================ -->
+<!-- TASK 1 -->
+<!-- ============================================================ -->
+<h2 id="task1" class="phase-header phase1"><span class="phase-num">1</span> Fix CI Cache Ordering &amp; Add Matrix Testing</h2>
+
+<p><strong>File:</strong> <code>.github/workflows/build-test.yml</code></p>
+
+<h3 id="task1-problem">Problem</h3>
+<ul>
+  <li>A standalone <code>actions/cache@v4</code> step (lines 33&ndash;39) was redundant because <code>setup-java</code> already handles
+      Maven caching via <code>cache: 'maven'</code> on line 28.</li>
+  <li>The CI only tested on Java 11. The Gosu compiler should also be verified on Java 17.</li>
+  <li>The "Test results Summary" step hardcoded <code>**Java Version:** 11</code>.</li>
+</ul>
+
+<h3 id="task1-changes">Changes</h3>
+<table>
+  <thead><tr><th>Change</th><th>Detail</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><span class="badge badge-removed">removed</span> Redundant cache step</td>
+      <td>Deleted the <code>actions/cache@v4</code> block. <code>setup-java</code> with <code>cache: 'maven'</code> already handles it.</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-added">added</span> Build matrix</td>
+      <td><code>strategy.matrix.java-version: ['11', '17']</code> with per-version <code>maven-args</code>.</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-added">added</span> Dynamic Java version in summary</td>
+      <td><code>${{ matrix.java-version }}</code> replaces the hardcoded <code>11</code>.</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-added">added</span> Unique artifact names</td>
+      <td><code>test-reports-java-${{ matrix.java-version }}</code> prevents upload collisions.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="task1-matrix">Build Matrix Details</h3>
 
 <table>
-  <thead>
-    <tr><th>Tool</th><th>Version</th><th>Notes</th></tr>
-  </thead>
+  <thead><tr><th>Java Version</th><th>Modules Built</th><th>Maven Args</th></tr></thead>
+  <tbody>
+    <tr><td>11</td><td>All 12 modules</td><td><em>(none)</em></td></tr>
+    <tr><td>17</td><td>All except <code>gosu-lab</code>, <code>gosu-doc</code>, <code>gosu-ant-tools</code>, <code>gosu</code></td>
+        <td><code>-pl !gosu-lab,!gosu-doc,!gosu-ant-tools,!gosu</code></td></tr>
+  </tbody>
+</table>
+
+<div class="note note-info">
+  <strong>Why exclude modules on Java 17?</strong> These modules use JDK-internal APIs that changed
+  between JDK 11 and 17:
+  <ul>
+    <li><code>gosu-lab</code> &mdash; <code>GosuVisitor</code> implements <code>TreeVisitor</code>, which added
+        abstract method <code>visitYield(YieldTree)</code> in JDK 14+. The parameter types don't exist
+        in JDK 11, so the method can't be compiled on both.</li>
+    <li><code>gosu-doc</code> &mdash; <code>Start.java</code> calls <code>CommandLine.parse()</code> which returns
+        <code>String[]</code> in JDK 11 but <code>List&lt;String&gt;</code> in JDK 17.</li>
+    <li><code>gosu-ant-tools</code> / <code>gosu</code> &mdash; depend on <code>gosu-doc</code>.</li>
+  </ul>
+  The core language, compiler, and full test suite (13,900+ tests) run successfully on both JDKs.
+</div>
+
+<h3 id="task1-workflow">Final Workflow (abridged)</h3>
+<pre><code>strategy:
+  matrix:
+    java-version: ['11', '17']
+    include:
+      - java-version: '11'
+        maven-args: ''
+      - java-version: '17'
+        maven-args: '-pl !gosu-lab,!gosu-doc,!gosu-ant-tools,!gosu'
+
+steps:
+  - uses: actions/checkout@v4
+
+  - name: Set up Java (Amazon Corretto ${{ matrix.java-version }})
+    uses: actions/setup-java@v4
+    with:
+      distribution: 'corretto'
+      java-version: ${{ matrix.java-version }}
+      cache: 'maven'                          # &larr; handles caching
+
+  - name: Build and run tests
+    run: mvn clean verify -B -V ${{ matrix.maven-args }}
+
+  - name: Test results Summary
+    run: |
+      echo "**Java Version:** ${{ matrix.java-version }}" &gt;&gt; $GITHUB_STEP_SUMMARY
+      ...
+
+  - uses: actions/upload-artifact@v4
+    with:
+      name: test-reports-java-${{ matrix.java-version }}   # unique per JDK
+      ...</code></pre>
+
+<!-- ============================================================ -->
+<!-- TASK 2 -->
+<!-- ============================================================ -->
+<h2 id="task2" class="phase-header phase2"><span class="phase-num">2</span> Fix Hardcoded Permission Checks in Workflows</h2>
+
+<h3 id="task2-problem">Problem</h3>
+<p>The <code>actions/github-script</code> permission check steps in the publish and release workflows
+hardcoded <code>owner: 'gosu-lang'</code> and <code>repo: 'gosu-lang'</code>. This breaks in forks
+where the owner/repo differ from the upstream.</p>
+
+<h3 id="task2-diff">Diff</h3>
+<p>Applied identically to both files:</p>
+<div class="diff">
+  <div class="diff-line diff-hdr">@@ permission check in actions/github-script @@</div>
+  <div class="diff-line diff-ctx"> const permission = await github.rest.repos.getCollaboratorPermissionLevel({</div>
+  <div class="diff-line diff-del">-  owner: 'gosu-lang',</div>
+  <div class="diff-line diff-del">-  repo: 'gosu-lang',</div>
+  <div class="diff-line diff-add">+  owner: context.repo.owner,</div>
+  <div class="diff-line diff-add">+  repo: context.repo.repo,</div>
+  <div class="diff-line diff-ctx">   username: context.actor</div>
+  <div class="diff-line diff-ctx"> });</div>
+</div>
+
+<h3 id="task2-files">Affected Files</h3>
+<ul class="file-list">
+  <li><code>.github/workflows/publish-snapshots.yml</code> (lines 27&ndash;28)</li>
+  <li><code>.github/workflows/release-gosu.yml</code> (lines 47&ndash;48)</li>
+</ul>
+
+<div class="note note-tip">
+  <strong>Result:</strong> <code>context.repo.owner</code> and <code>context.repo.repo</code> are automatically
+  set by GitHub Actions to the repository where the workflow is running, making permission
+  checks fork-safe.
+</div>
+
+<!-- ============================================================ -->
+<!-- TASK 3 -->
+<!-- ============================================================ -->
+<h2 id="task3" class="phase-header phase3"><span class="phase-num">3</span> Upgrade Vulnerable jQuery in gosu-doc</h2>
+
+<h3 id="task3-vulnerability">Vulnerability</h3>
+<table>
+  <thead><tr><th>Field</th><th>Value</th></tr></thead>
+  <tbody>
+    <tr><td>Library</td><td>jQuery</td></tr>
+    <tr><td>Old version</td><td><span class="badge badge-removed">1.10.2</span> (2013)</td></tr>
+    <tr><td>New version</td><td><span class="badge badge-added">3.7.1</span> (2023, latest stable)</td></tr>
+    <tr><td>Key CVEs fixed</td><td>CVE-2015-9251, CVE-2019-11358, CVE-2020-11022, CVE-2020-11023</td></tr>
+    <tr><td>Risk</td><td>XSS via <code>$.htmlPrefilter</code>, prototype pollution via <code>$.extend</code></td></tr>
+  </tbody>
+</table>
+
+<h3 id="task3-changes">Changes</h3>
+
+<p><strong>Resource directory:</strong>
+<code>gosu-doc/src/main/resources/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/resources/jquery/</code></p>
+
+<table>
+  <thead><tr><th>Action</th><th>File</th></tr></thead>
+  <tbody>
+    <tr><td><span class="badge badge-removed">deleted</span></td><td><code>jquery-1.10.2.js</code></td></tr>
+    <tr><td><span class="badge badge-added">added</span></td><td><code>jquery-3.7.1.js</code></td></tr>
+    <tr><td><span class="badge badge-added">updated</span></td><td><code>external/jquery/jquery.js</code> (now contains jQuery 3.7.1)</td></tr>
+  </tbody>
+</table>
+
+<h3 id="task3-api">API Compatibility Audit</h3>
+
+<p>Searched all gosu-doc HTML templates and JavaScript files for deprecated jQuery APIs that were
+removed in jQuery 3.x:</p>
+
+<table>
+  <thead><tr><th>Deprecated API</th><th>Removed In</th><th>Found?</th></tr></thead>
+  <tbody>
+    <tr><td><code>.live()</code></td><td>1.9</td><td>No</td></tr>
+    <tr><td><code>.die()</code></td><td>1.9</td><td>No</td></tr>
+    <tr><td><code>.size()</code></td><td>1.8 (use <code>.length</code>)</td><td>No (only Java <code>List.size()</code> calls found)</td></tr>
+    <tr><td><code>.andSelf()</code></td><td>3.0</td><td>No</td></tr>
+    <tr><td><code>.error()</code> as event</td><td>3.0</td><td>No</td></tr>
+    <tr><td><code>.load()</code> as event</td><td>3.0</td><td>No</td></tr>
+    <tr><td><code>.unload()</code></td><td>3.0</td><td>No</td></tr>
+  </tbody>
+</table>
+
+<div class="note note-tip">
+  <strong>Result:</strong> No breaking API usage found. The upgrade is safe.
+</div>
+
+<h3 id="task3-java">Java Reference Updates</h3>
+
+<p>Three Java source files reference the jQuery filename and were updated:</p>
+
+<table>
+  <thead><tr><th>File</th><th>Change</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><code>DocPaths.java</code></td>
+      <td><code>JQUERY_JS_1_10 = "jquery-1.10.2.js"</code> &rarr; <code>JQUERY_JS_3_7 = "jquery-3.7.1.js"</code></td>
+    </tr>
+    <tr>
+      <td><code>HtmlDoclet.java</code></td>
+      <td><code>copyJqueryFiles()</code> list: <code>"jquery-1.10.2.js"</code> &rarr; <code>"jquery-3.7.1.js"</code></td>
+    </tr>
+    <tr>
+      <td><code>HtmlDocletWriter.java</code></td>
+      <td><code>DocPaths.JQUERY_JS_1_10</code> &rarr; <code>DocPaths.JQUERY_JS_3_7</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ============================================================ -->
+<!-- TASK 4 -->
+<!-- ============================================================ -->
+<h2 id="task4" class="phase-header phase4"><span class="phase-num">4</span> Add CONTRIBUTING.md</h2>
+
+<p><strong>Files added:</strong> <code>CONTRIBUTING.md</code> (Markdown) + <code>CONTRIBUTING.html</code> (this document)</p>
+
+<h3 id="task4-prereqs">Prerequisites</h3>
+
+<table>
+  <thead><tr><th>Tool</th><th>Version</th><th>Notes</th></tr></thead>
   <tbody>
     <tr>
       <td><strong>Java JDK</strong> <span class="badge badge-required">required</span></td>
@@ -156,34 +420,31 @@
   <strong>Tip:</strong> Verify your setup with <code>java -version</code> (should show 11.x) and <code>mvn --version</code>.
 </div>
 
-<!-- ================================================ -->
-<h2 id="building">Building</h2>
+<h3 id="task4-building">Building</h3>
 
-<p>Clone the repository and compile:</p>
-<pre><code>git clone https://github.com/gosu-lang/gosu-lang.git
+<pre><code># Clone and compile
+git clone https://github.com/gosu-lang/gosu-lang.git
 cd gosu-lang
 export JAVA_HOME=/path/to/jdk-11
-mvn compile</code></pre>
+mvn compile
 
-<p>To run the full test suite (~13,900 tests across 12 modules):</p>
-<pre><code>mvn test</code></pre>
+# Run full test suite (~13,900 tests across 12 modules)
+mvn test
 
-<p>To run a single test class:</p>
-<pre><code>mvn test -pl gosu-test \
-  -Dtest=gw.specification.statements.forEachStatement.ForEachStatementTest</code></pre>
+# Run a single test class
+mvn test -pl gosu-test \
+  -Dtest=gw.specification.statements.forEachStatement.ForEachStatementTest
 
-<p>To build and verify (compile + test + integration checks):</p>
-<pre><code>mvn clean verify -B -V</code></pre>
+# Full build + verification
+mvn clean verify -B -V</code></pre>
 
-<!-- ================================================ -->
-<h2 id="add-exports"><code>--add-exports</code> Requirements &amp; IDE Setup</h2>
+<h3 id="task4-exports"><code>--add-exports</code> Requirements &amp; IDE Setup</h3>
 
 <p>Gosu accesses internal JDK APIs (<code>com.sun.tools.javac.*</code>, <code>sun.reflect.annotation</code>,
 <code>sun.awt</code>, etc.). The Maven POM (<code>gosu-parent/pom.xml</code>) already configures the required
-<code>--add-exports</code> flags for the compiler and surefire plugins. However, your IDE may need
-manual configuration.</p>
+<code>--add-exports</code> flags. Your IDE may need manual configuration:</p>
 
-<h3>Required <code>--add-exports</code> Flags</h3>
+<h4>Required Flags</h4>
 <pre><code>--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
 --add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
 --add-exports=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED
@@ -201,32 +462,25 @@ manual configuration.</p>
 --add-exports=java.desktop/sun.awt=ALL-UNNAMED
 --add-exports=java.desktop/sun.awt.shell=ALL-UNNAMED</code></pre>
 
-<h3>IntelliJ IDEA</h3>
+<h4>IntelliJ IDEA</h4>
 <ol>
   <li>Go to <strong>File &rarr; Settings &rarr; Build, Execution, Deployment &rarr; Compiler &rarr; Java Compiler</strong>.</li>
   <li>Under <strong>Additional command line parameters</strong>, paste the flags above.</li>
   <li>For test execution, add the same flags under <strong>Run/Debug Configurations &rarr; VM Options</strong>.</li>
 </ol>
 
-<h3>Eclipse</h3>
+<h4>Eclipse</h4>
 <p>Open <strong>Project Properties &rarr; Java Build Path &rarr; Module Dependencies</strong> and add the same exports.</p>
 
-<h3>VS Code (with Java extensions)</h3>
-<p>Add to <code>.vscode/settings.json</code>:</p>
+<h4>VS Code (with Java extensions)</h4>
 <pre><code>{
-  "java.project.referencedLibraries": [],
   "java.jdt.ls.vmargs": "--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED ..."
 }</code></pre>
 
-<!-- ================================================ -->
-<h2 id="modules">Module Overview</h2>
-
-<p>The Gosu project is organized into 12 Maven modules:</p>
+<h3 id="task4-modules">Module Overview</h3>
 
 <table>
-  <thead>
-    <tr><th>Module</th><th>Description</th></tr>
-  </thead>
+  <thead><tr><th>Module</th><th>Description</th></tr></thead>
   <tbody>
     <tr><td><code>gosu-parent</code></td><td>Parent POM &mdash; centralizes dependency versions, plugin configuration, and <code>--add-exports</code> flags for all modules.</td></tr>
     <tr><td><code>gosu</code></td><td>Distribution POM &mdash; assembles the final Gosu distribution archive.</td></tr>
@@ -243,56 +497,46 @@ manual configuration.</p>
   </tbody>
 </table>
 
-<!-- ================================================ -->
-<h2 id="test-patterns">Test Patterns</h2>
+<h3 id="task4-tests">Test Patterns</h3>
 
-<h3 id="errant-tests">Errant Type Tests (<code>BaseVerifyErrantTest</code> + <code>processErrantType</code>)</h3>
+<h4>Errant Type Tests (<code>BaseVerifyErrantTest</code> + <code>processErrantType</code>)</h4>
 
-<p>Errant tests verify that the Gosu compiler correctly reports parse/compile errors.
-The pattern works as follows:</p>
+<p>Errant tests verify that the Gosu compiler correctly reports parse/compile errors.</p>
 
-<h4>1. Test class</h4>
+<h4>Step 1 &mdash; Test Class</h4>
 <p>Extends <code>BaseVerifyErrantTest</code> and calls <code>processErrantType(Errant_Foo)</code>:</p>
-<pre><code>// File: SomeFeatureTest.gs
-class SomeFeatureTest extends BaseVerifyErrantTest {
+<pre><code>class SomeFeatureTest extends BaseVerifyErrantTest {
   function testErrant_SomeFeatureTest() {
     processErrantType(Errant_SomeFeatureTest)
   }
 }</code></pre>
 
-<h4>2. Errant type class</h4>
-<p>The companion file (<code>Errant_SomeFeatureTest.gs</code>) contains intentionally broken code with
-special comment annotations:</p>
+<h4>Step 2 &mdash; Errant Type Class</h4>
+<p>Contains intentionally broken code with <code>//## issuekeys:</code> annotations:</p>
 <pre><code>class Errant_SomeFeatureTest {
   var x : int = "hello"  //## issuekeys: MSG_TYPE_MISMATCH
   var y : int = 42       // No annotation = no error expected
 }</code></pre>
 
-<h4>3. How <code>processErrantType</code> works</h4>
+<h4>Step 3 &mdash; How <code>processErrantType</code> Works</h4>
 <ol>
-  <li>Parses the errant type's source code line-by-line.</li>
-  <li>For each line with <code>//## issuekeys: KEY1, KEY2</code>, asserts that the compiler produced
-      <strong>exactly</strong> those errors on that line.</li>
-  <li>For lines <strong>without</strong> annotations, asserts <strong>no</strong> errors were produced.</li>
-  <li>Lines with <code>//## KB(JIRA-123)</code> mark known breaks (skipped when
-      <code>-Dgw.tests.skip.knownbreak=true</code>).</li>
+  <li>Parses the errant type's source line-by-line.</li>
+  <li>For each line with <code>//## issuekeys: KEY1, KEY2</code>, asserts exactly those errors are reported.</li>
+  <li>For lines <strong>without</strong> annotations, asserts <strong>no</strong> errors exist.</li>
+  <li>Lines with <code>//## KB(JIRA-123)</code> mark known breaks (skipped with <code>-Dgw.tests.skip.knownbreak=true</code>).</li>
 </ol>
-
-<h4>4. Issue keys</h4>
-<p>Issue keys correspond to constants in <code>gw.lang.parser.resources.Res</code>
-(e.g., <code>MSG_TYPE_MISMATCH</code>, <code>MSG_NO_SUCH_FUNCTION</code>). Look up the constant names
-in that class to find the right annotation value.</p>
 
 <div class="note note-warn">
   <strong>Important:</strong> Each errant line must list <em>every</em> expected issue key. If the compiler
-  emits two errors on one line, both keys must appear in the annotation (comma-separated).
+  emits two errors on one line, both keys must appear comma-separated.
+  Issue keys correspond to constants in <code>gw.lang.parser.resources.Res</code>
+  (e.g., <code>MSG_TYPE_MISMATCH</code>, <code>MSG_NO_SUCH_FUNCTION</code>).
 </div>
 
-<h3 id="spec-tests">Specification Tests (<code>gw/specification/</code>)</h3>
+<h4>Specification Tests (<code>gw/specification/</code>)</h4>
 
-<p>Specification tests are organized under
-<code>gosu-test/src/test/gosu/gw/specification/</code> and map directly to sections of the
-Gosu language specification:</p>
+<p>Organized under <code>gosu-test/src/test/gosu/gw/specification/</code>, mapping directly to
+language specification sections:</p>
 
 <div class="tree">gw/specification/
 &#9500;&#9472;&#9472; expressions/                  # Arithmetic, comparison, ternary, etc.
@@ -313,12 +557,7 @@ Gosu language specification:</p>
 &#9500;&#9472;&#9472; variablesParametersFieldsScope/ # Scoping rules
 &#9492;&#9472;&#9472; temp/                          # Exploratory / in-progress tests</div>
 
-<p>Each test class typically extends either <code>TestClass</code> (for functional tests) or
-<code>BaseVerifyErrantTest</code> (for compile-error tests). Test methods follow the convention
-<code>testXxx()</code> or <code>testErrant_Xxx()</code>.</p>
-
-<!-- ================================================ -->
-<h2 id="pr-guidelines">PR Guidelines</h2>
+<h3 id="task4-pr">PR Guidelines</h3>
 
 <ol>
   <li><strong>Branch from <code>master</code></strong> &mdash; create a feature branch for your work.</li>
@@ -330,17 +569,17 @@ Gosu language specification:</p>
   </li>
   <li><strong>Follow existing code style</strong> &mdash; Gosu source uses 2-space indentation; Java source
       follows standard Java conventions.</li>
-  <li><strong>Update documentation</strong> &mdash; if your change affects public API, update the relevant
-      gosudoc comments.</li>
+  <li><strong>Update documentation</strong> &mdash; if your change affects public API, update gosudoc comments.</li>
   <li><strong>CI must pass</strong> &mdash; the GitHub Actions workflow runs tests on Java&nbsp;11 and
       Java&nbsp;17 via a build matrix. Both must pass.</li>
-  <li><strong>Sign-off</strong> &mdash; by submitting a PR you agree that your contribution is provided under
+  <li><strong>Sign-off</strong> &mdash; by submitting a PR you agree your contribution is provided under
       the <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License 2.0</a>.</li>
 </ol>
 
-<!-- ================================================ -->
-<h2 id="links">Useful Links</h2>
-
+<!-- ============================================================ -->
+<!-- LINKS -->
+<!-- ============================================================ -->
+<h2>Useful Links</h2>
 <ul>
   <li><a href="http://gosu-lang.github.io/">Gosu Language Home</a></li>
   <li><a href="http://groups.google.com/group/gosu-lang">Discussion Forum</a></li>
