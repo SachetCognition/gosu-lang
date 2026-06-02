@@ -201,7 +201,7 @@ def scan_phase3():
         rel = fpath.replace(REPO_ROOT + '/', '')
         for i, line in enumerate(lines):
             # Pattern: catch block followed by empty/comment-only body
-            if re.search(r'catch\s*\(', line):
+            if re.search(r'catch\s*\(', line) and not line.lstrip().startswith('//'):
                 # Look ahead for empty bodies or comment-only bodies
                 j = i + 1
                 brace_count = 0
@@ -610,7 +610,7 @@ def generate_html(phase1, phase2, phase3, phase4, phase5, phase6, phase7, recomm
     )
 
     critical_count = sum(1 for f in phase4 if f['severity'] == 'HIGH')
-    high_count = sum(1 for f in phase6 if f['severity'] == 'High') + critical_count
+    high_count = sum(1 for f in phase6 if f['severity'] == 'High') + critical_count + sum(1 for g in phase7 if g['priority'] == 'High')
     medium_count = (
         sum(1 for f in phase4 if f['severity'] == 'MEDIUM') +
         sum(1 for f in phase6 if f['severity'] == 'Medium') +
