@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contributing to Gosu</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1a1a2e;
+      --accent: #0f3460;
+      --accent-light: #e3edf7;
+      --border: #d0d7de;
+      --code-bg: #f6f8fa;
+      --table-stripe: #f6f8fa;
+      --success: #1a7f37;
+      --warn: #9a6700;
+      --link: #0969da;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--fg);
+      background: var(--bg);
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    h1 {
+      font-size: 2rem;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.5rem;
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 1.5rem;
+      margin-top: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.3rem;
+    }
+    h3 { font-size: 1.2rem; margin-top: 1.8rem; }
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: var(--code-bg);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-size: 0.9em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+      border-radius: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--border);
+    }
+    th {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+    tr:nth-child(even) td { background: var(--table-stripe); }
+    blockquote {
+      border-left: 4px solid var(--accent);
+      margin: 1rem 0;
+      padding: 0.5rem 1rem;
+      background: var(--accent-light);
+      border-radius: 0 6px 6px 0;
+    }
+    blockquote p { margin: 0.4rem 0; }
+    .badge {
+      display: inline-block;
+      padding: 0.15em 0.6em;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .badge-required { background: #cf222e; }
+    .badge-recommended { background: var(--success); }
+    .toc { background: var(--accent-light); border-radius: 8px; padding: 1rem 1.5rem; margin: 1.5rem 0; }
+    .toc h2 { margin-top: 0; border: none; font-size: 1.2rem; }
+    .toc ol { margin: 0; padding-left: 1.5rem; }
+    .toc li { margin: 0.3rem 0; }
+    .tree { font-family: monospace; white-space: pre; background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; overflow-x: auto; font-size: 0.875rem; }
+    .note { padding: 0.75rem 1rem; border-radius: 6px; margin: 1rem 0; }
+    .note-tip { background: #dafbe1; border-left: 4px solid var(--success); }
+    .note-warn { background: #fff8c5; border-left: 4px solid var(--warn); }
+    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.85rem; color: #656d76; }
+  </style>
+</head>
+<body>
+
+<h1>Contributing to Gosu</h1>
+<p>Thank you for your interest in contributing to the Gosu programming language! This guide covers everything you need to get started.</p>
+
+<nav class="toc">
+  <h2>Table of Contents</h2>
+  <ol>
+    <li><a href="#prerequisites">Prerequisites</a></li>
+    <li><a href="#building">Building</a></li>
+    <li><a href="#add-exports">--add-exports Requirements &amp; IDE Setup</a></li>
+    <li><a href="#modules">Module Overview</a></li>
+    <li><a href="#test-patterns">Test Patterns</a>
+      <ol>
+        <li><a href="#errant-tests">Errant Type Tests</a></li>
+        <li><a href="#spec-tests">Specification Tests</a></li>
+      </ol>
+    </li>
+    <li><a href="#pr-guidelines">PR Guidelines</a></li>
+    <li><a href="#links">Useful Links</a></li>
+  </ol>
+</nav>
+
+<!-- ================================================ -->
+<h2 id="prerequisites">Prerequisites</h2>
+
+<table>
+  <thead>
+    <tr><th>Tool</th><th>Version</th><th>Notes</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Java JDK</strong> <span class="badge badge-required">required</span></td>
+      <td>11</td>
+      <td>Set <code>JAVA_HOME</code> to point to your JDK&nbsp;11 installation</td>
+    </tr>
+    <tr>
+      <td><strong>Maven</strong> <span class="badge badge-required">required</span></td>
+      <td>3.x</td>
+      <td>Used for builds, dependency management, and releases</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="note note-tip">
+  <strong>Tip:</strong> Verify your setup with <code>java -version</code> (should show 11.x) and <code>mvn --version</code>.
+</div>
+
+<!-- ================================================ -->
+<h2 id="building">Building</h2>
+
+<p>Clone the repository and compile:</p>
+<pre><code>git clone https://github.com/gosu-lang/gosu-lang.git
+cd gosu-lang
+export JAVA_HOME=/path/to/jdk-11
+mvn compile</code></pre>
+
+<p>To run the full test suite (~13,900 tests across 12 modules):</p>
+<pre><code>mvn test</code></pre>
+
+<p>To run a single test class:</p>
+<pre><code>mvn test -pl gosu-test \
+  -Dtest=gw.specification.statements.forEachStatement.ForEachStatementTest</code></pre>
+
+<p>To build and verify (compile + test + integration checks):</p>
+<pre><code>mvn clean verify -B -V</code></pre>
+
+<!-- ================================================ -->
+<h2 id="add-exports"><code>--add-exports</code> Requirements &amp; IDE Setup</h2>
+
+<p>Gosu accesses internal JDK APIs (<code>com.sun.tools.javac.*</code>, <code>sun.reflect.annotation</code>,
+<code>sun.awt</code>, etc.). The Maven POM (<code>gosu-parent/pom.xml</code>) already configures the required
+<code>--add-exports</code> flags for the compiler and surefire plugins. However, your IDE may need
+manual configuration.</p>
+
+<h3>Required <code>--add-exports</code> Flags</h3>
+<pre><code>--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.doclint=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.platform=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED
+--add-exports=java.base/sun.reflect.annotation=ALL-UNNAMED
+--add-exports=java.base/sun.security.action=ALL-UNNAMED
+--add-exports=java.desktop/sun.font=ALL-UNNAMED
+--add-exports=java.desktop/sun.swing=ALL-UNNAMED
+--add-exports=java.desktop/sun.swing.icon=ALL-UNNAMED
+--add-exports=java.desktop/sun.awt=ALL-UNNAMED
+--add-exports=java.desktop/sun.awt.shell=ALL-UNNAMED</code></pre>
+
+<h3>IntelliJ IDEA</h3>
+<ol>
+  <li>Go to <strong>File &rarr; Settings &rarr; Build, Execution, Deployment &rarr; Compiler &rarr; Java Compiler</strong>.</li>
+  <li>Under <strong>Additional command line parameters</strong>, paste the flags above.</li>
+  <li>For test execution, add the same flags under <strong>Run/Debug Configurations &rarr; VM Options</strong>.</li>
+</ol>
+
+<h3>Eclipse</h3>
+<p>Open <strong>Project Properties &rarr; Java Build Path &rarr; Module Dependencies</strong> and add the same exports.</p>
+
+<h3>VS Code (with Java extensions)</h3>
+<p>Add to <code>.vscode/settings.json</code>:</p>
+<pre><code>{
+  "java.project.referencedLibraries": [],
+  "java.jdt.ls.vmargs": "--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED ..."
+}</code></pre>
+
+<!-- ================================================ -->
+<h2 id="modules">Module Overview</h2>
+
+<p>The Gosu project is organized into 12 Maven modules:</p>
+
+<table>
+  <thead>
+    <tr><th>Module</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>gosu-parent</code></td><td>Parent POM &mdash; centralizes dependency versions, plugin configuration, and <code>--add-exports</code> flags for all modules.</td></tr>
+    <tr><td><code>gosu</code></td><td>Distribution POM &mdash; assembles the final Gosu distribution archive.</td></tr>
+    <tr><td><code>gosu-core-api</code></td><td>Public API &mdash; defines interfaces for the type system, reflection, parsing, and compilation (<code>IType</code>, <code>ITypeLoader</code>, <code>IGosuClass</code>, etc.).</td></tr>
+    <tr><td><code>gosu-core-api-precompiled</code></td><td>Precompiled classes &mdash; ships pre-built <code>.class</code> files for bootstrap types needed before the Gosu compiler itself is available.</td></tr>
+    <tr><td><code>gosu-core</code></td><td>Core implementation &mdash; the Gosu compiler, parser, bytecode generator (via ASM), type system internals, and runtime support.</td></tr>
+    <tr><td><code>gosu-lab</code></td><td>Gosu Lab IDE &mdash; a Swing-based interactive development environment with an editor, REPL, and experiment management.</td></tr>
+    <tr><td><code>gosu-doc</code></td><td>Gosudoc &mdash; a Javadoc-style documentation generator adapted for Gosu source files.</td></tr>
+    <tr><td><code>gosu-ant-tools</code></td><td>Ant integration &mdash; provides custom Ant tasks for compiling and documenting Gosu projects.</td></tr>
+    <tr><td><code>gosu-maven-compiler</code></td><td>Maven compiler &mdash; a Plexus Compiler component that plugs Gosu compilation into the standard Maven build lifecycle.</td></tr>
+    <tr><td><code>gosu-process</code></td><td>Process utilities &mdash; helpers for launching and managing external OS processes from Gosu code.</td></tr>
+    <tr><td><code>gosu-test</code></td><td>Test suite &mdash; language-level tests covering the specification, errant-type verification, and regression tests.</td></tr>
+    <tr><td><code>gosu-test-api</code></td><td>Test API &mdash; base classes and utilities (<code>TestClass</code>, <code>TestEnvironment</code>) shared across test modules.</td></tr>
+  </tbody>
+</table>
+
+<!-- ================================================ -->
+<h2 id="test-patterns">Test Patterns</h2>
+
+<h3 id="errant-tests">Errant Type Tests (<code>BaseVerifyErrantTest</code> + <code>processErrantType</code>)</h3>
+
+<p>Errant tests verify that the Gosu compiler correctly reports parse/compile errors.
+The pattern works as follows:</p>
+
+<h4>1. Test class</h4>
+<p>Extends <code>BaseVerifyErrantTest</code> and calls <code>processErrantType(Errant_Foo)</code>:</p>
+<pre><code>// File: SomeFeatureTest.gs
+class SomeFeatureTest extends BaseVerifyErrantTest {
+  function testErrant_SomeFeatureTest() {
+    processErrantType(Errant_SomeFeatureTest)
+  }
+}</code></pre>
+
+<h4>2. Errant type class</h4>
+<p>The companion file (<code>Errant_SomeFeatureTest.gs</code>) contains intentionally broken code with
+special comment annotations:</p>
+<pre><code>class Errant_SomeFeatureTest {
+  var x : int = "hello"  //## issuekeys: MSG_TYPE_MISMATCH
+  var y : int = 42       // No annotation = no error expected
+}</code></pre>
+
+<h4>3. How <code>processErrantType</code> works</h4>
+<ol>
+  <li>Parses the errant type's source code line-by-line.</li>
+  <li>For each line with <code>//## issuekeys: KEY1, KEY2</code>, asserts that the compiler produced
+      <strong>exactly</strong> those errors on that line.</li>
+  <li>For lines <strong>without</strong> annotations, asserts <strong>no</strong> errors were produced.</li>
+  <li>Lines with <code>//## KB(JIRA-123)</code> mark known breaks (skipped when
+      <code>-Dgw.tests.skip.knownbreak=true</code>).</li>
+</ol>
+
+<h4>4. Issue keys</h4>
+<p>Issue keys correspond to constants in <code>gw.lang.parser.resources.Res</code>
+(e.g., <code>MSG_TYPE_MISMATCH</code>, <code>MSG_NO_SUCH_FUNCTION</code>). Look up the constant names
+in that class to find the right annotation value.</p>
+
+<div class="note note-warn">
+  <strong>Important:</strong> Each errant line must list <em>every</em> expected issue key. If the compiler
+  emits two errors on one line, both keys must appear in the annotation (comma-separated).
+</div>
+
+<h3 id="spec-tests">Specification Tests (<code>gw/specification/</code>)</h3>
+
+<p>Specification tests are organized under
+<code>gosu-test/src/test/gosu/gw/specification/</code> and map directly to sections of the
+Gosu language specification:</p>
+
+<div class="tree">gw/specification/
+&#9500;&#9472;&#9472; expressions/                  # Arithmetic, comparison, ternary, etc.
+&#9500;&#9472;&#9472; genericTypesAndMethods/        # Generics, type parameters, variance
+&#9500;&#9472;&#9472; statements/                    # for-each, if/else, switch, try-catch, using
+&#9474;   &#9500;&#9472;&#9472; assignmentStatements/
+&#9474;   &#9500;&#9472;&#9472; blockStatements/
+&#9474;   &#9500;&#9472;&#9472; forEachStatement/
+&#9474;   &#9500;&#9472;&#9472; returnsExitsAndExceptions/
+&#9474;   &#9492;&#9472;&#9472; ...
+&#9500;&#9472;&#9472; types/                         # Primitive types, reference types, conversions
+&#9474;   &#9500;&#9472;&#9472; primitiveTypes/
+&#9474;   &#9500;&#9472;&#9472; referenceTypes/
+&#9474;   &#9500;&#9472;&#9472; typeConversion/
+&#9474;   &#9492;&#9472;&#9472; ...
+&#9500;&#9472;&#9472; typeDynamic/                   # Dynamic type behavior
+&#9500;&#9472;&#9472; structures/                    # Structural typing
+&#9500;&#9472;&#9472; variablesParametersFieldsScope/ # Scoping rules
+&#9492;&#9472;&#9472; temp/                          # Exploratory / in-progress tests</div>
+
+<p>Each test class typically extends either <code>TestClass</code> (for functional tests) or
+<code>BaseVerifyErrantTest</code> (for compile-error tests). Test methods follow the convention
+<code>testXxx()</code> or <code>testErrant_Xxx()</code>.</p>
+
+<!-- ================================================ -->
+<h2 id="pr-guidelines">PR Guidelines</h2>
+
+<ol>
+  <li><strong>Branch from <code>master</code></strong> &mdash; create a feature branch for your work.</li>
+  <li><strong>Keep changes focused</strong> &mdash; one logical change per PR.</li>
+  <li><strong>Add tests</strong> &mdash; for new features, add specification tests under <code>gw/specification/</code>.
+      For bug fixes involving incorrect error reporting, add or update errant tests.</li>
+  <li><strong>Run the full build</strong> before submitting:
+    <pre><code>mvn clean verify -B</code></pre>
+  </li>
+  <li><strong>Follow existing code style</strong> &mdash; Gosu source uses 2-space indentation; Java source
+      follows standard Java conventions.</li>
+  <li><strong>Update documentation</strong> &mdash; if your change affects public API, update the relevant
+      gosudoc comments.</li>
+  <li><strong>CI must pass</strong> &mdash; the GitHub Actions workflow runs tests on Java&nbsp;11 and
+      Java&nbsp;17 via a build matrix. Both must pass.</li>
+  <li><strong>Sign-off</strong> &mdash; by submitting a PR you agree that your contribution is provided under
+      the <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License 2.0</a>.</li>
+</ol>
+
+<!-- ================================================ -->
+<h2 id="links">Useful Links</h2>
+
+<ul>
+  <li><a href="http://gosu-lang.github.io/">Gosu Language Home</a></li>
+  <li><a href="http://groups.google.com/group/gosu-lang">Discussion Forum</a></li>
+  <li><a href="https://github.com/gosu-lang/gosu-lang/issues">Issue Tracker</a></li>
+  <li><a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License 2.0</a></li>
+</ul>
+
+<footer>
+  <p>Gosu is released under the <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License 2.0</a>.
+  &copy; Gosu Language contributors.</p>
+</footer>
+
+</body>
+</html>
