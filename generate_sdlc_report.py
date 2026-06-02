@@ -284,23 +284,33 @@ def scan_phase4():
 
     # XXE Protection check
     registry_path = os.path.join(REPO_ROOT, 'gosu-core-api/src/main/java/gw/config/Registry.java')
-    xml_parser_path = os.path.join(REPO_ROOT, 'gosu-core-api/src/main/java/gw/util/SimpleXmlParser.java')
+    xml_parser_path = os.path.join(REPO_ROOT, 'gosu-core-api/src/main/java/gw/xml/simple/SimpleXmlParser.java')
 
     xxe_pass = False
     for p in [registry_path, xml_parser_path]:
         if os.path.exists(p):
             content = read_file(p)
-            if 'FEATURE_EXTERNAL_GENERAL_ENTITIES' in content or 'disallow-doctype-decl' in content or 'XMLConstants' in content:
+            if 'external-general-entities' in content or 'disallow-doctype-decl' in content or 'XMLConstants' in content or 'setFeature' in content:
                 xxe_pass = True
 
-    findings.append({
-        'id': 'SEC-001',
-        'severity': 'PASS',
-        'category': 'XXE Protection',
-        'finding': 'XML parsers correctly disable external entities',
-        'location': 'Registry.java, SimpleXmlParser.java',
-        'recommendation': 'No action needed. Continue to enforce XXE protections in new XML parsing code.'
-    })
+    if xxe_pass:
+        findings.append({
+            'id': 'SEC-001',
+            'severity': 'PASS',
+            'category': 'XXE Protection',
+            'finding': 'XML parsers correctly disable external entities',
+            'location': 'Registry.java, SimpleXmlParser.java',
+            'recommendation': 'No action needed. Continue to enforce XXE protections in new XML parsing code.'
+        })
+    else:
+        findings.append({
+            'id': 'SEC-001',
+            'severity': 'HIGH',
+            'category': 'XXE Protection',
+            'finding': 'XML parsers do not appear to disable external entities',
+            'location': 'Registry.java, SimpleXmlParser.java',
+            'recommendation': 'Add XXE protections (disable external entities, disallow doctype declarations) to all XML parsing code.'
+        })
 
     # Vulnerable jQuery
     jquery_path = 'gosu-doc/src/main/resources/gw/gosudoc/com/sun/tools/doclets/internal/toolkit/resources/jquery/jquery-1.10.2.js'
